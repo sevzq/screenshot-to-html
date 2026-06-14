@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>screenshot-to-html — gallery of pixel-faithful, interactive HTML replicas</title>
+<meta name="description" content="An AI coding-agent skill that clones any UI screenshot into one faithful, fully interactive single-file HTML page — verified in real Chrome. Browse the live gallery.">
+<link rel="canonical" href="https://sevzq.github.io/screenshot-to-html/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="screenshot-to-html — clone any UI screenshot into one interactive HTML file">
+<meta property="og:description" content="A coding-agent skill: render → screenshot → compare → refine, until the page matches your image. Then it wires up real interactions and verifies them in headless Chrome.">
+<meta property="og:image" content="https://sevzq.github.io/screenshot-to-html/assets/social-preview.png">
+<meta property="og:url" content="https://sevzq.github.io/screenshot-to-html/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="screenshot-to-html — clone any UI screenshot into one interactive HTML file">
+<meta name="twitter:description" content="Render → screenshot → compare → refine, until render(code) ≈ target. Verified interactive in real Chrome.">
+<meta name="twitter:image" content="https://sevzq.github.io/screenshot-to-html/assets/social-preview.png">
+<style>
+  :root{
+    --bg:#08090b; --panel:#101317; --panel-2:#0c0e11; --line:rgba(255,255,255,.08);
+    --line-strong:rgba(255,255,255,.16); --ink:#f4f5f7; --muted:#9aa3ad; --muted-soft:#6b7480;
+    --green:#34d77f; --green-ink:#22c55e; --radius:16px;
+    --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--font);
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+    background-image:
+      radial-gradient(1100px 520px at 78% -8%, rgba(52,215,127,.10), transparent 60%),
+      radial-gradient(900px 480px at 12% 0%, rgba(45,90,220,.08), transparent 55%);
+    background-repeat:no-repeat;
+  }
+  a{color:inherit; text-decoration:none}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--green); outline-offset:3px; border-radius:8px}
+  .shot:focus-visible{outline:2px solid var(--green); outline-offset:-3px}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 22px}
+
+  /* top bar */
+  .nav{display:flex; align-items:center; gap:14px; height:64px}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em}
+  .brand .mark{display:inline-flex; align-items:center; gap:7px; font-size:17px}
+  .brand .arrow{color:var(--green)}
+  .nav .spacer{flex:1}
+  .nav a.ghost{color:var(--muted); font-size:14px; font-weight:500; padding:8px 12px; border-radius:9px}
+  .nav a.ghost:hover{color:var(--ink); background:rgba(255,255,255,.05)}
+  .nav .star{display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:600;
+    padding:8px 14px; border:1px solid var(--line-strong); border-radius:99px; color:var(--ink)}
+  .nav .star:hover{border-color:var(--green); color:var(--green)}
+  .nav .star svg{width:15px;height:15px}
+
+  /* hero */
+  .hero{padding:54px 0 34px; text-align:center}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600;
+    letter-spacing:.04em; text-transform:uppercase; color:var(--muted);
+    border:1px solid var(--line); border-radius:99px; padding:6px 14px}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,215,127,.18)}
+  h1{font-size:clamp(34px,6vw,62px); line-height:1.02; letter-spacing:-.03em; margin:22px 0 0; font-weight:800}
+  h1 .g{color:var(--green)}
+  .sub{max-width:660px; margin:18px auto 0; font-size:clamp(15px,2.2vw,18px); color:var(--muted)}
+  .actions{display:flex; gap:12px; justify-content:center; align-items:center; margin-top:26px; flex-wrap:wrap}
+  .install{display:inline-flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:11px 14px; font-family:var(--mono); font-size:14px}
+  .install code{color:var(--ink)}
+  .install .dollar{color:var(--green)}
+  .install button{all:unset; cursor:pointer; color:var(--muted); display:inline-flex; padding:3px; border-radius:6px}
+  .install button:hover{color:var(--ink); background:rgba(255,255,255,.07)}
+  .install button svg{width:15px;height:15px;display:block}
+  .btn-primary{display:inline-flex; align-items:center; gap:8px; background:var(--green-ink); color:#04130b;
+    font-weight:700; font-size:14px; padding:12px 18px; border-radius:12px}
+  .btn-primary:hover{background:var(--green)}
+
+  /* section head */
+  .sec{padding:30px 0 10px}
+  .sec h2{font-size:21px; letter-spacing:-.01em; margin:0 0 4px}
+  .sec p.lead{color:var(--muted); margin:0 0 22px; font-size:14.5px}
+  .kicker{display:inline-block; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--green); margin-bottom:8px}
+
+  /* grid */
+  .grid{display:grid; gap:20px; grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+  .grid.featured{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
+  .card{display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--line);
+    border-radius:var(--radius); overflow:hidden; transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease}
+  .card:hover{transform:translateY(-4px); border-color:var(--line-strong);
+    box-shadow:0 18px 40px -22px rgba(0,0,0,.8), 0 0 0 1px rgba(52,215,127,.16)}
+  .shot{aspect-ratio:2 / 1; background:var(--panel-2); border-bottom:1px solid var(--line);
+    display:block; overflow:hidden; position:relative}
+  .shot img{width:100%; height:100%; object-fit:contain; display:block}
+  .badge{position:absolute; top:10px; left:10px; display:inline-flex; align-items:center; gap:6px;
+    font-size:11px; font-weight:700; letter-spacing:.03em; color:#04130b; background:var(--green);
+    padding:4px 9px; border-radius:99px}
+  .badge svg{width:11px;height:11px}
+  .card .body{padding:16px 17px 17px; display:flex; flex-direction:column; flex:1}
+  .card h3{margin:0; font-size:16px; letter-spacing:-.01em}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin:9px 0 0}
+  .tag{font-size:11px; font-weight:600; color:var(--muted); border:1px solid var(--line);
+    border-radius:99px; padding:3px 9px}
+  .card .desc{color:var(--muted); font-size:13.5px; margin:11px 0 0; flex:1}
+  .links{display:flex; align-items:center; gap:8px; margin-top:15px; flex-wrap:wrap}
+  .links a{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600;
+    padding:8px 12px; border-radius:9px; border:1px solid var(--line); color:var(--ink)}
+  .links a:hover{border-color:var(--line-strong); background:rgba(255,255,255,.04)}
+  .links a.go{background:var(--ink); color:#0a0a0a; border-color:var(--ink)}
+  .links a.go:hover{background:#fff}
+  .links a.demo{color:var(--green); border-color:rgba(52,215,127,.4)}
+  .links a.demo:hover{background:rgba(52,215,127,.1)}
+  .links a svg{width:14px;height:14px}
+
+  footer{border-top:1px solid var(--line); margin-top:48px; padding:30px 0 60px; color:var(--muted-soft); font-size:13.5px}
+  footer .row{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
+  footer a{color:var(--muted)} footer a:hover{color:var(--ink)}
+  footer .spacer{flex:1}
+  .note{margin-top:14px; font-size:12px; color:var(--muted-soft); max-width:720px}
+
+  @media (max-width:640px){
+    .nav a.ghost.hide{display:none}
+    .hero{padding:36px 0 24px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <nav class="nav">
+    <a class="brand" href="./" aria-label="screenshot-to-html">
+      <span class="mark">screenshot<span class="arrow">&rarr;</span>html</span>
+    </a>
+    <span class="spacer"></span>
+    <a class="ghost hide" href="https://github.com/sevzq/screenshot-to-html#install">Install</a>
+    <a class="ghost hide" href="https://github.com/sevzq/screenshot-to-html#how-it-works">How it works</a>
+    <a class="star" href="https://github.com/sevzq/screenshot-to-html" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
+      Star on GitHub
+    </a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span> Agent skill · verified in real Chrome</span>
+    <h1>Clone any UI screenshot<br>into one <span class="g">interactive</span> HTML file</h1>
+    <p class="sub">Drop a screenshot. A coding agent renders, screenshots its own output, compares to your image, and refines until it matches — then wires up real hover / focus / click states. Every page below is a single self-contained file.</p>
+    <div class="actions">
+      <span class="install">
+        <span><span class="dollar">$</span> <code id="cmd">npx skills add sevzq/screenshot-to-html</code></span>
+        <button id="copy" aria-label="Copy install command" title="Copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </span>
+      <a class="btn-primary" href="https://github.com/sevzq/screenshot-to-html">View on GitHub</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="kicker">Featured</span>
+    <h2>Full app UIs, fully interactive</h2>
+    <p class="lead">Zero-dependency replicas — drag the carousels, toggle the controls, switch the tabs.</p>
+    <div class="grid featured" id="featured"></div>
+  </section>
+
+  <section class="sec">
+    <span class="kicker">Gallery</span>
+    <h2>More replicas</h2>
+    <p class="lead">Landing pages, dashboards, light &amp; dark, desktop &amp; mobile. Click any card to open the live HTML.</p>
+    <div class="grid" id="more"></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="row">
+    <a class="brand" href="https://github.com/sevzq/screenshot-to-html"><span class="mark">screenshot<span class="arrow">&rarr;</span>html</span></a>
+    <span class="spacer"></span>
+    <a href="https://github.com/sevzq/screenshot-to-html">GitHub</a>
+    <a href="https://github.com/sevzq/screenshot-to-html#install">Install</a>
+    <a href="https://github.com/sevzq/screenshot-to-html/blob/main/SKILL.md">SKILL.md</a>
+    <a href="https://skills.sh">skills.sh</a>
+  </div>
+  <p class="note">Built with the skill itself. Example screenshots are real app UIs used for replication demos only and belong to their respective owners. MIT licensed.</p>
+</footer>
+
+<script>
+  const FEATURED = [
+    { slug:'app-elevenlabs', name:'ElevenLabs — Voices library', tags:['App UI','Light','Carousel'],
+      desc:'Sidebar, tabs, filter chips, a 3×2 trending grid and a drag-snap "Handpicked" carousel. Avatars are CSS gradients; icons inline SVG.', demo:'elevenlabs-demo.gif' },
+    { slug:'app-spotify', name:'Spotify — web player', tags:['App UI','Dark','Slider'],
+      desc:'A dark three-pane player. Rows reveal a play glyph on hover, the transport toggles, the panel collapses, volume is a real slider.', demo:'spotify-demo.gif' },
+    { slug:'mobile-airbnb', name:'Airbnb — iOS app', tags:['Mobile','iOS','Carousel'],
+      desc:'393px @3x in an iPhone frame. Each card is a swipeable photo carousel with velocity snap; hearts pop; the tab bar switches screens.', demo:'airbnb-demo.gif' },
+  ];
+  const MORE = [
+    { slug:'landing-cloudflare', name:'Cloudflare — landing', tags:['Landing','Light'],
+      desc:'Giant black-and-orange headline and full nav in pure CSS; only the geodesic sphere is cropped.' },
+    { slug:'landing-modal', name:'Modal — landing', tags:['Landing','Dark'],
+      desc:'Pure-black hero with a spring-green accent; the glowing cube is screen-blended so there is no seam.' },
+    { slug:'landing-clay', name:'Clay — landing', tags:['Landing','Colorful'],
+      desc:'Cream hero on white with a huge display headline; four clay sculptures multiply-blended across the edge.' },
+    { slug:'landing-stripe', name:'Stripe — landing', tags:['Landing','Gradient'],
+      desc:'Diagonal gradient and multiply-blended headline in pure CSS; only the checkout cluster is cropped.' },
+    { slug:'mobile-tesla', name:'Tesla — charging screen', tags:['Mobile','iOS','Slider'],
+      desc:'393px @3x iPhone frame; the Model 3 render is color-matched to the screen. Charge-limit slider is a real range input.' },
+    { slug:'dashboard-stripe', name:'Stripe — dashboard', tags:['Dashboard','Charts'],
+      desc:'Rebuilt entirely as code: inline-SVG charts, CSS bars, zero crops. Sidebar nav, Test-mode switch and date pills respond.' },
+    { slug:'landing-linear', name:'Linear — landing', tags:['Landing','Dark'],
+      desc:'Hand-built HTML/CSS; only the product-UI card is lifted from the source. Smooth-scroll in-page links.' },
+  ];
+  const ICON = {
+    go:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>',
+    src:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>',
+    play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+    bolt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
+  };
+  function card(x, featured){
+    const tags = x.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+    const badge = featured ? `<span class="badge">${ICON.bolt} Interactive</span>` : '';
+    const demo = x.demo ? `<a class="demo" href="assets/${x.demo}" target="_blank" rel="noopener">${ICON.play} Demo</a>` : '';
+    return `<article class="card">
+      <a class="shot" href="examples/${x.slug}/output.html" target="_blank" rel="noopener" aria-label="Open ${x.name} live HTML">
+        ${badge}<img loading="lazy" src="examples/${x.slug}/comparison.webp" alt="${x.name}: original screenshot vs HTML replica">
+      </a>
+      <div class="body">
+        <h3>${x.name}</h3>
+        <div class="tags">${tags}</div>
+        <p class="desc">${x.desc}</p>
+        <div class="links">
+          <a class="go" href="examples/${x.slug}/output.html" target="_blank" rel="noopener">Open live HTML ${ICON.go}</a>
+          <a href="examples/${x.slug}/input.png" target="_blank" rel="noopener">${ICON.src} Source</a>
+          ${demo}
+        </div>
+      </div>
+    </article>`;
+  }
+  document.getElementById('featured').innerHTML = FEATURED.map(x=>card(x,true)).join('');
+  document.getElementById('more').innerHTML = MORE.map(x=>card(x,false)).join('');
+
+  const copyBtn = document.getElementById('copy');
+  copyBtn.addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(document.getElementById('cmd').textContent.trim());
+      const old = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#34d77f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+      setTimeout(()=>{ copyBtn.innerHTML = old; }, 1400);
+    }catch(e){}
+  });
+</script>
+</body>
+</html>
