@@ -22,8 +22,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "shot": "node skills/screenshot-to-html/scripts/shot.mjs",
-    "crop": "node skills/screenshot-to-html/scripts/crop.mjs"
+    "shot": "node scripts/shot.mjs",
+    "crop": "node scripts/crop.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.60.0",

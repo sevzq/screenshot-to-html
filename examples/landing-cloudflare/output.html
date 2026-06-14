@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloudflare — Connect, protect, and build everywhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #1d1d1d;
+    --body: #4d4d4d;
+    --muted: #757575;
+    --line: #e2e2e2;
+    --orange: #f6821f;
+    --orange-press: #e1730f;
+    --ring: #2f7bbf;
+    --pad: clamp(20px, 5vw, 64px);
+    --maxw: 1240px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* Shared interactive affordances (Phase 4) — feedback only, resting look unchanged */
+  .ix { cursor: pointer; transition: color .14s ease, background-color .14s ease, border-color .14s ease, opacity .14s ease; }
+  .ix:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
+  .ix:active { transform: translateY(.5px); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .ix { transition: none; } }
+
+  .shell { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--pad); }
+
+  /* Utility bar */
+  .util { display: flex; justify-content: flex-end; align-items: center; gap: 22px; padding-top: 14px; font-size: 13px; color: #4d4d4d; }
+  .util a { display: inline-flex; align-items: center; gap: 6px; }
+  .util a:hover { color: #000; }
+  .util .sales { color: #4d4d4d; }
+  .util .sales b { font-weight: 500; }
+  .util svg { display: block; }
+
+  /* Primary nav */
+  .nav { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0 0; }
+  .brand img { height: 25px; width: auto; display: block; }
+  .menu { display: flex; align-items: center; gap: 30px; margin-inline: auto; }
+  .menu a { font-size: 16px; font-weight: 500; color: #313131; }
+  .menu a:hover { color: var(--orange); }
+  .auth { display: flex; align-items: center; gap: 12px; }
+  .btn { appearance: none; -webkit-appearance: none; border: 1.5px solid transparent; font-family: inherit; font-size: 15px; font-weight: 600; padding: 9px 17px; border-radius: 8px; line-height: 1; white-space: nowrap; }
+  .btn-ghost { background: #fff; color: #1d1d1d; border-color: #d6d6d6; }
+  .btn-ghost:hover { border-color: #9a9a9a; }
+  .btn-orange { background: var(--orange); color: #fff; }
+  .btn-orange:hover { background: var(--orange-press); }
+
+  /* Hero */
+  .hero { position: relative; padding: clamp(44px, 6.5vw, 88px) 0 0; }
+  .sphere { position: absolute; z-index: 0; top: clamp(6px, 1.2vw, 30px); right: calc(var(--pad) * -1); width: min(61%, 770px); height: auto; pointer-events: none; user-select: none; }
+  .hero-inner { position: relative; z-index: 1; max-width: 700px; }
+  .h1 { margin: 0; font-weight: 800; font-size: clamp(36px, 4.4vw, 55px); line-height: 1.06; letter-spacing: -0.022em; color: #1d1d1d; }
+  .h1 .accent { color: var(--orange); }
+  .lede { margin: 18px 0 0; max-width: 655px; font-size: 13.5px; line-height: 1.5; color: var(--body); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+  .hero-actions .btn { font-size: 15px; padding: 11px 19px; }
+
+  /* Report band */
+  .reports { position: relative; z-index: 2; margin: clamp(92px, 15vw, 200px) 0 60px; }
+  .reports-card { position: relative; background: #fff; border: 1px solid #ededed; border-radius: 10px; box-shadow: 0 18px 40px -24px rgba(20,20,20,.28); overflow: hidden; }
+  .reports-card::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg, #f6821f 0%, #fbad41 60%, #ffd9a8 100%); }
+  .reports-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .report { display: flex; align-items: center; gap: 20px; padding: 22px 28px; }
+  .report + .report { border-left: 1px solid #ededed; }
+  .report .thumb { flex: 0 0 auto; }
+  .report .cover { width: 92px; height: auto; border-radius: 6px; display: block; box-shadow: 0 4px 12px -6px rgba(0,0,0,.35); }
+  .report .gauge { width: 88px; height: auto; display: block; }
+  .report .rtitle { margin: 0; font-size: 17px; font-weight: 700; color: #1d1d1d; letter-spacing: -0.01em; }
+  .report .rsub { margin: 6px 0 12px; font-size: 14.5px; color: var(--muted); }
+  .report .dl { display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 500; color: #1d1d1d; }
+  .report .dl svg { color: var(--orange); transition: transform .14s ease; }
+  .report .dl:hover { color: var(--orange); }
+  .report .dl:hover svg { transform: translateX(3px); }
+
+  @media (max-width: 980px) {
+    .menu { display: none; }
+    .sphere { opacity: .5; right: -22%; top: 40px; width: 70%; }
+  }
+  @media (max-width: 720px) {
+    .util { gap: 14px; }
+    .util .support { display: none; }
+    .sphere { display: none; }
+    .reports-grid { grid-template-columns: 1fr; }
+    .report + .report { border-left: 0; border-top: 1px solid #ededed; }
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="util">
+      <a class="ix" href="#" aria-label="Search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      </a>
+      <a class="ix support" href="#">Support</a>
+      <span class="sales">Sales: <b>00180349248340049</b></span>
+      <a class="ix" href="#" aria-label="Language">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+    </div>
+
+    <header class="nav">
+      <a class="brand ix" href="#" aria-label="Cloudflare home"><img src="assets/logo.png" alt="Cloudflare"></a>
+      <nav class="menu" aria-label="Primary">
+        <a class="ix" href="#">Platform</a>
+        <a class="ix" href="#">Products</a>
+        <a class="ix" href="#">Developers</a>
+        <a class="ix" href="#">Partners</a>
+        <a class="ix" href="#">Resources</a>
+        <a class="ix" href="#">Company</a>
+      </nav>
+      <div class="auth">
+        <a class="btn btn-ghost ix" href="#">Log in</a>
+        <a class="btn btn-orange ix" href="#">Under attack?</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <img class="sphere" src="assets/sphere.png" alt="" aria-hidden="true">
+        <div class="hero-inner">
+          <h1 class="h1">Connect, protect, and<br>build <span class="accent">everywhere</span></h1>
+          <p class="lede">We make websites, apps, AI agents, and networks faster and more secure. Our agile SASE platform accelerates safe AI adoption, and our developer platform is the best place to build and run AI apps.</p>
+          <div class="hero-actions">
+            <a class="btn btn-orange ix" href="#">Start for free</a>
+            <a class="btn btn-ghost ix" href="#">See pricing</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="reports" aria-label="Featured reports">
+        <div class="reports-card">
+          <div class="reports-grid">
+            <article class="report">
+              <span class="thumb"><img class="cover" src="assets/report-cover.png" alt="2026 Cloudflare Security Signals Report cover"></span>
+              <div>
+                <h2 class="rtitle">New 2026 Security Signals Report</h2>
+                <p class="rsub">Six principles for autonomic resilience</p>
+                <a class="dl ix" href="#">Download report
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 6 15 12 9 18"/></svg>
+                </a>
+              </div>
+            </article>
+            <article class="report">
+              <span class="thumb"><img class="gauge" src="assets/report-gauge.png" alt=""></span>
+              <div>
+                <h2 class="rtitle">2026 Cloudflare Threat Report</h2>
+                <p class="rsub">How adversaries are weaponizing the Internet</p>
+                <a class="dl ix" href="#">Download report
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 6 15 12 9 18"/></svg>
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

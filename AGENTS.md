@@ -7,19 +7,20 @@ into Cursor, Claude Code, Codex, and 40+ agents via `npx skills`.
 
 ## Repo structure
 
-- `skills/screenshot-to-html/` — the skill (authoritative source).
-  - `SKILL.md` — entry point and workflow. Keep under ~500 lines.
-  - `reference.md` — analysis rubric, comparison method, quality-first asset strategy, interactions & states.
-  - `references/animation.md` — optional GSAP motion patterns (Phase 6, on request only).
-  - `scripts/shot.mjs` — render a local HTML file with installed Chrome (playwright-core); also audits interactivity (`--verify`) and captures states (`--hover` / `--focus` / `--click` / `--states`).
-  - `scripts/crop.mjs` — lift real imagery out of the source screenshot (sharp / macOS sips).
-- `.claude-plugin/marketplace.json` + `plugin.json` — Claude Code install manifests (`source: "./"`, skills under `./skills/`).
-- `examples/` — gallery cases: `<slug>/{input.png, output.html, comparison.png, assets/}`.
+Single-skill repo: `SKILL.md` lives at the root (the whole repo *is* the skill), matching the `npx skills` convention used by top skill repos.
+
+- `SKILL.md` — entry point and workflow. Keep under ~500 lines.
+- `reference.md` — analysis rubric, comparison method, quality-first asset strategy, interactions & states.
+- `references/animation.md` — optional GSAP motion patterns (Phase 6, on request only).
+- `scripts/shot.mjs` — render a local HTML file with installed Chrome (playwright-core); also audits interactivity (`--verify`) and captures states (`--hover` / `--focus` / `--click` / `--states`).
+- `scripts/crop.mjs` — lift real imagery out of the source screenshot (sharp / macOS sips).
+- `examples/` — gallery cases: `<slug>/{input.png, output.html, comparison.webp, assets/}`.
+- `assets/` — README media (hero video, gallery exports).
 - `inbox/` — staging for source screenshots (gitignored).
 
 ## SKILL.md conventions (Agent Skills)
 
-- Frontmatter `name` must be lowercase/hyphenated and match the directory (`screenshot-to-html`).
+- Frontmatter `name` must be lowercase/hyphenated (`screenshot-to-html`); it matches the skill folder name when installed.
 - `description` is third-person and includes trigger terms.
 - Long material lives in `reference.md` / `references/`, linked from `SKILL.md`.
 
@@ -33,7 +34,7 @@ Resolve it without interrogating the user.
 
 ## Running the scripts
 
-From `skills/screenshot-to-html/`:
+From the repo root:
 
 ```bash
 node scripts/shot.mjs --in replica.html --out tmp/screenshot-to-html/v1.png --width 1280

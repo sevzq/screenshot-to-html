@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clay — Go to market with unique data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --cream: #f3efe7;
+    --ink: #1a1a1a;
+    --muted: #5f5f5f;
+    --nav: #2a2a2a;
+    --pill: #efece6;
+    --ring: #4f7cff;
+    --pad: clamp(18px, 3.4vw, 40px);
+    --maxw: 1300px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; }
+
+  .ix { cursor: pointer; transition: color .14s ease, background-color .14s ease, border-color .14s ease, opacity .14s ease; }
+  .ix:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+  .ix:active { transform: translateY(.5px); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .ix { transition: none; } }
+
+  .shell { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--pad); }
+
+  /* Nav */
+  .nav { display: flex; align-items: center; gap: 26px; padding: 16px 0; }
+  .brand img { height: 22px; width: auto; display: block; }
+  .menu { display: flex; align-items: center; gap: 22px; }
+  .menu a { font-size: 14.5px; font-weight: 500; color: var(--nav); }
+  .menu a:hover { color: #000; }
+  .nav-right { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+  .kbd { display: inline-flex; align-items: center; gap: 7px; color: #8a8a8a; }
+  .kbd kbd { font-family: inherit; font-size: 12px; color: #6f6f6f; }
+  .demo { background: var(--pill); color: #1a1a1a; font-size: 14px; font-weight: 500; padding: 8px 15px; border-radius: 9px; border: 0; font-family: inherit; }
+  .demo:hover { background: #e6e2da; }
+  .sep { width: 1px; height: 20px; background: #dad6cd; }
+  .login { font-size: 14.5px; font-weight: 500; color: #1a1a1a; }
+  .login:hover { color: #555; }
+  .signup { display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: 10px; border: 0; font-family: inherit; }
+  .signup:hover { background: #2c2c2c; }
+
+  /* Hero */
+  .hero { position: relative; }
+  .panel { background: var(--cream); border-radius: 30px; margin: 4px clamp(0px, 0.8vw, 14px) 0; padding: clamp(42px, 5.6vw, 78px) 24px clamp(34px, 4.4vw, 62px); text-align: center; background-image: radial-gradient(120% 90% at 80% 10%, rgba(255,255,255,.5), rgba(255,255,255,0) 55%); }
+  .h1 { margin: 0 auto; max-width: 980px; font-weight: 800; font-size: clamp(33px, 5vw, 62px); line-height: 1.04; letter-spacing: -0.028em; color: var(--ink); }
+  .lede { margin: 20px auto 0; max-width: 470px; font-size: 17px; line-height: 1.45; color: var(--muted); }
+  .hero-cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 24px; background: #111; color: #fff; font-size: 15px; font-weight: 600; padding: 13px 22px; border-radius: 12px; border: 0; font-family: inherit; }
+  .hero-cta:hover { background: #2c2c2c; }
+
+  /* Sculptures (cropped real imagery, multiplied onto white) */
+  .clay { position: absolute; mix-blend-mode: multiply; pointer-events: none; user-select: none; z-index: 1; }
+  .clay-left { left: clamp(-6px, 0.5vw, 18px); bottom: clamp(40px, 6vw, 90px); width: min(33%, 430px); }
+  .clay-right { right: clamp(-6px, 0.5vw, 10px); bottom: clamp(30px, 5vw, 74px); width: min(35%, 460px); }
+
+  /* Trusted + ratings (on white, between sculptures) */
+  .trusted { position: relative; z-index: 2; text-align: center; padding: clamp(20px, 2.6vw, 34px) 0 0; }
+  .trusted p { margin: 0 auto; max-width: 440px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; line-height: 1.7; color: #2b2b2b; text-transform: uppercase; }
+  .ratings { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 16px; flex-wrap: wrap; }
+  .rate { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #4a4a4a; }
+  .rate .g2 { width: 18px; height: 18px; border-radius: 50%; background: #ff492c; color: #fff; font-size: 9px; font-weight: 800; display: grid; place-items: center; }
+  .rate .ppl { color: #6b6b6b; }
+  .rate b { font-weight: 700; color: #1a1a1a; }
+  .stars { color: #f5a623; letter-spacing: 1px; font-size: 12px; }
+  .rate .muted { color: #8a8a8a; }
+
+  /* Logo wall */
+  .logos { padding: clamp(14px, 2vw, 28px) 0 clamp(24px, 3.4vw, 44px); display: grid; gap: clamp(10px, 1.3vw, 16px); }
+  .logos img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+
+  @media (max-width: 860px) {
+    .menu, .kbd { display: none; }
+    .clay { opacity: .9; }
+    .clay-left { width: 40%; }
+    .clay-right { width: 42%; }
+  }
+  @media (max-width: 600px) {
+    .login, .sep { display: none; }
+    .clay { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header class="nav">
+      <a class="brand ix" href="#" aria-label="Clay home"><img src="assets/clay-logo.png" alt="Clay"></a>
+      <nav class="menu" aria-label="Primary">
+        <a class="ix" href="#">Product</a>
+        <a class="ix" href="#">Use cases</a>
+        <a class="ix" href="#">Solutions</a>
+        <a class="ix" href="#">Resources</a>
+        <a class="ix" href="#">Company</a>
+        <a class="ix" href="#">Pricing</a>
+      </nav>
+      <div class="nav-right">
+        <span class="kbd"><kbd>&#8984;</kbd><kbd>K</kbd>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        </span>
+        <button class="demo ix" type="button">Get a demo</button>
+        <span class="sep"></span>
+        <a class="login ix" href="#">Log in</a>
+        <a class="signup ix" href="#">Sign up
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12 6 18 12 12 18"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="panel">
+          <h1 class="h1">Go to market with unique data<br>&mdash; and the ability to act on it</h1>
+          <p class="lede">Bring AI agents, enrichment, and intent data together and turn insights into relevant, timely action.</p>
+          <a class="hero-cta ix" href="#">Start building for free
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12 6 18 12 12 18"/></svg>
+          </a>
+        </div>
+
+        <img class="clay clay-left" src="assets/clay-left.png" alt="" aria-hidden="true">
+        <img class="clay clay-right" src="assets/clay-right.png" alt="" aria-hidden="true">
+
+        <div class="trusted">
+          <p>Trusted by more than 300,000 leading GTM teams of all sizes. Built with love. Inspired by our customers.</p>
+          <div class="ratings">
+            <span class="rate"><span class="g2">G2</span><b>4.9</b><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+            <span class="rate">
+              <svg class="ppl" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="8.5" r="2.6"/><path d="M15 14.5a5 5 0 0 1 5.5 4.5"/></svg>
+              <span class="muted">40K+ GTME community</span><b>5.0</b><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="logos" aria-label="Customers">
+        <img src="assets/logos1.png" alt="Canva, HubSpot, Vanta, Intercom, Google, OpenAI, Webflow, Cursor, Anthropic, Grafana Labs">
+        <img src="assets/logos2.png" alt="Ramp, Rippling, Notion, Perplexity, Uber, Figma, Dropbox, Verkada, Okta, Klaviyo">
+      </section>
+    </main>
+  </div>
+</body>
+</html>
