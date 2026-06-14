@@ -4,7 +4,7 @@
 
 # screenshot-to-html
 
-**丢一张截图，拿回一个像素级还原、_还能点_的单文件 HTML 页面。**
+**丢一张截图，拿回一个像素级还原、可真实交互的单文件 HTML 页面。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3da639.svg)](LICENSE)
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-2b6cb0)](https://agentskills.io)
@@ -22,28 +22,28 @@ npx skills add sevzq/screenshot-to-html
 
 可在 **Cursor · Claude Code · Codex · Windsurf · Copilot** 等 40+ agent 中使用。
 
-[看画廊](#画廊) · [安装](#安装) · [工作原理](#工作原理) · [为什么不一样](#为什么不一样)
+[看案例展示](#案例展示) · [安装](#安装) · [工作原理](#工作原理) · [为什么不一样](#为什么不一样)
 
 </div>
 
 ---
 
 <p align="center">
-  <img src="assets/hero.gif" alt="在 AI agent 里：把 Cloudflare 首页截图拖进来，输入一句「把这张截图复刻成一个可交互的自包含 HTML 文件」。技能跑起 rendered-state 循环 —— 在真实 Chrome 里渲染、截图、对比、精修 —— 最后用前后对比滑块揭示：生成的单一 HTML 文件与原始截图几乎一模一样。" width="100%">
+  <img src="assets/hero.zh.gif" alt="在真实的 Claude Code 终端里：先用 'npx skills add sevzq/screenshot-to-html' 安装技能，再粘贴一张 Modal 首页截图，输入一句「把这张截图复刻成一个可真实交互的单文件 HTML 页面」。技能读取图片、写出 output.html，并用无头 Chrome 验证控件，最后揭示成品页面 —— 一个像素级还原、可真实交互的单一 HTML 文件。" width="100%">
 </p>
 
 <p align="center"><sub>
-  ▲ 拖入一张截图，输入一句话。技能在真实 Chrome 里跑 <b>rendered-state 循环</b> —— 渲染 → 截图 → 对比 → 精修 —— 再验证「真能点」。滑块揭示<b>原图 ⟷ 生成的单一 HTML 文件</b>。
-  &nbsp;·&nbsp; <a href="assets/hero.mp4">高清 MP4</a>
+  ▲ 先安装技能，打开 <b>Claude Code</b>（或 Cursor / Codex），粘贴一张截图，输入一句话。技能读取图片、写出单个 <code>output.html</code>，并<b>用真实 Chrome 验证交互</b> —— 最后揭示成品页面。
+  &nbsp;·&nbsp; <a href="assets/hero.zh.mp4">高清 MP4</a>
 </sub></p>
 
-> **这篇 README 里的每一个复刻页，都是这个技能自己产出的**，并且用无头 Chrome 验证过「真能点」—— 每个都是带内联 CSS/JS 的单一 HTML 文件，无框架、无构建步骤。
+> **这篇 README 里的每一个复刻页，都是这个技能自己产出的**，并且用无头 Chrome 验证过可真实交互 —— 每个都是带内联 CSS/JS 的单一 HTML 文件，无框架、无构建步骤。
 
 ---
 
 ## 为什么不一样
 
-大多数「截图转代码」工具生成一次就停了。`screenshot-to-html` 优化的是你**真正看到**、并且**真正能点**的东西：
+大多数「截图转代码」工具生成一次就停了。`screenshot-to-html` 优化的是你**真正看到**、并且**真正可交互**的东西：
 
 - **靠闭环还原，不靠运气** —— 它用真实 Chrome 给自己的产物截图，分区域和你的原图对比（布局 → 间距 → 颜色 → 字体 → 细节），不断修正直到吻合。是语义化 HTML + 设计令牌，而不是一堆绝对定位的魔法数字。
 - **真的可交互 —— 而且经过验证** —— 真实的 `<button>` / `<a>`、hover / focus / active 状态，以及截图暗示的可用 tab、导航、弹窗。用 `shot.mjs --verify` 审计，发现「死按钮」直接让构建不通过。不是一张假装成页面的静态图。
@@ -52,7 +52,7 @@ npx skills add sevzq/screenshot-to-html
 - **真实尺寸、自适应** —— 按真实设计宽度 + 流式单位（`clamp()` / `max-width`）编写，所以 100% 缩放下也正常显示并自适应，绝不是一个固定的「迷你版」。
 - **就跑在你已经在用的 agent 里** —— 无需部署 web 应用、无需额外 API key、无需基础设施。它就是一个技能。
 
-## 画廊
+## 案例展示
 
 左边是真实 App 截图，右边是生成出来的单文件 HTML 复刻 —— 明暗、桌面与移动、落地页、后台、完整 App UI 都有。完整源文件见 [`examples/`](examples/)。每个复刻都可交互，并且通过 `node scripts/shot.mjs --verify`。
 
@@ -109,6 +109,16 @@ npx skills add sevzq/screenshot-to-html
 ![Stripe 仪表盘：原始截图 vs HTML 复刻](examples/dashboard-stripe/comparison.webp)
 
 [原图](examples/dashboard-stripe/input.png) · [HTML 复刻](examples/dashboard-stripe/output.html) —— 图表是内联 SVG，堆叠条是 CSS；整屏零图片裁切、纯代码重建。可交互：侧边导航、Test mode 开关、日期/周期 pill 都有反馈，卡片和行悬停高亮。
+
+## 可选：用 GSAP 加动效
+
+动效是**可选项** —— agent 不会主动问、也不会主动加，只有你明确要求时才会加。需要时，Phase 6 会通过一个 CDN 标签叠加克制、自包含的 [GSAP](https://gsap.com/)（无构建步骤），而且动画始终是「动到」最终的 CSS 状态，所以关掉 JS 或开启 `prefers-reduced-motion` 的访客依然能看到完整页面。
+
+下面是给 Modal 复刻页加了一层可选动效：错峰的 Hero 入场、持续轻浮的算力立方体，以及带回弹的按钮 hover：
+
+![加了可选 GSAP 动效的 Modal 复刻页：错峰入场 + 浮动立方体](assets/gsap-modal.gif)
+
+[动效源码](examples/landing-modal/output.gsap.html) · [高清 MP4](assets/gsap-modal.mp4) —— 和[静态 Modal 复刻页](examples/landing-modal/output.html)用的是同一套 HTML，只多了约 20 行 GSAP。可复用的动效模式见 [`references/animation.md`](references/animation.md)。
 
 ## 工作原理
 
@@ -175,7 +185,7 @@ git clone https://github.com/sevzq/screenshot-to-html.git ~/.cursor/skills/scree
 
 ## 实现细节
 
-- **交互经过验证。** `node scripts/shot.mjs --in page.html --verify` 会审计页面里的「死按钮」（看着能点的 `<div>`）、缺失的 `cursor: pointer`、以及没有任何 `:hover` / `:focus` 规则的情况，没修好就一直报 `WARN`。交互被当作还原度的一部分，而不是事后补丁。
+- **交互经过验证。** `node scripts/shot.mjs --in page.html --verify` 会审计页面里的「死按钮」（看起来可点击却没接事件的 `<div>`）、缺失的 `cursor: pointer`、以及没有任何 `:hover` / `:focus` 规则的情况，没修好就一直报 `WARN`。交互被当作还原度的一部分，而不是事后补丁。
 - **素材质量优先（自动）。** 每个图片位都不问你、按「最锐利、最具体」自动解析：**你提供的素材** → **官方品牌 SVG/logo** → 从原图裁出的**清晰区域**（[`crop.mjs`](scripts/crop.mjs)）→ 真实的 [Unsplash](https://unsplash.com) / `picsum.photos` 照片 → 兜底才用 `placehold.co`。
 - **动效是可选项。** 基础交互（hover / focus / 可点击）默认就有，但动画**只在**你明确要求时才加 —— Phase 6 会通过 CDN 叠加克制、自包含的 GSAP。见 [`references/animation.md`](references/animation.md)。
 
@@ -195,4 +205,4 @@ git clone https://github.com/sevzq/screenshot-to-html.git ~/.cursor/skills/scree
 
 [MIT](LICENSE) © SevenZhang
 
-> 画廊里的截图均为真实 App UI，仅用于复刻演示，版权归各自所有者。
+> 案例里的截图均为真实 App UI，仅用于复刻演示，版权归各自所有者。

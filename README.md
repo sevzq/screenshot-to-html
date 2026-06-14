@@ -4,7 +4,7 @@
 
 # screenshot-to-html
 
-**Drop a screenshot — get a pixel-faithful, _actually-clickable_ HTML page back.**
+**Drop a screenshot — get back a pixel-faithful, fully interactive single-file HTML page.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3da639.svg)](LICENSE)
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-2b6cb0)](https://agentskills.io)
@@ -29,15 +29,15 @@ Works in **Cursor · Claude Code · Codex · Windsurf · Copilot** — and 40+ a
 ---
 
 <p align="center">
-  <img src="assets/hero.gif" alt="Inside an AI agent: a Cloudflare homepage screenshot is dropped in with the prompt 'Clone this screenshot into one interactive, self-contained HTML file.' The skill runs a rendered-state loop — render in real Chrome, screenshot, compare, refine — then a before/after slider reveals the generated single HTML file matching the original screenshot." width="100%">
+  <img src="assets/hero.gif" alt="Inside a real Claude Code terminal: install the skill with 'npx skills add sevzq/screenshot-to-html', paste a screenshot of the Modal homepage, and type 'Clone this screenshot into one interactive, self-contained HTML file.' The skill reads the image, writes output.html, and verifies the controls in headless Chrome, then reveals the finished page — a pixel-faithful, fully interactive single HTML file." width="100%">
 </p>
 
 <p align="center"><sub>
-  ▲ Drop a screenshot, type one line. The skill runs a <b>rendered-state loop</b> in real Chrome — render → screenshot → compare → refine — then verifies it's clickable. The slider reveals <b>original ⟷ the generated single HTML file</b>.
+  ▲ Install the skill, open <b>Claude Code</b> (or Cursor / Codex), paste a screenshot, and type one line. The skill reads the image, writes a single <code>output.html</code>, and <b>verifies the interactions in real Chrome</b> — then reveals the finished page.
   &nbsp;·&nbsp; <a href="assets/hero.mp4">Hi-res MP4</a>
 </sub></p>
 
-> **Every replica in this README was produced by the skill** and verified clickable with headless Chrome — each is a single HTML file with inline CSS/JS, no framework, no build step.
+> **Every replica in this README was produced by the skill** and verified interactive with headless Chrome — each is a single HTML file with inline CSS/JS, no framework, no build step.
 
 ---
 
@@ -110,6 +110,16 @@ Real app screenshot (left) vs the generated single-file HTML replica (right) —
 
 [Source](examples/dashboard-stripe/input.png) · [HTML replica](examples/dashboard-stripe/output.html) — the charts are inline SVG and the stacked bar is CSS; the entire screen is rebuilt as code with zero image crops. Interactive: the sidebar nav, the Test-mode switch, and the date/period pills all respond, and cards/rows highlight on hover.
 
+## Optional: motion with GSAP
+
+Motion is **opt-in** — the agent never asks for it and never adds it unless you do. When you ask, Phase 6 layers in restrained, self-contained [GSAP](https://gsap.com/) (one CDN tag, no build step) and always animates *into* the final CSS state, so no-JS and `prefers-reduced-motion` visitors still get the finished page.
+
+Here's the Modal replica with an optional motion pass — a staggered hero load-in, an ambient floating compute cube, and spring-y button hovers:
+
+![Modal replica with an optional GSAP motion pass: staggered hero load-in and a floating compute cube](assets/gsap-modal.gif)
+
+[Motion source](examples/landing-modal/output.gsap.html) · [hi-res MP4](assets/gsap-modal.mp4) — the exact same markup as the [static Modal replica](examples/landing-modal/output.html), plus ~20 lines of GSAP. Reusable patterns live in [`references/animation.md`](references/animation.md).
+
 ## How it works
 
 ```
@@ -117,7 +127,7 @@ Phase 0  Setup        — inputs, stack, and the true design width / scale
 Phase 1  Read         — design tokens, layout intent, exact text
 Phase 2  Build        — a semantic, self-contained first draft
 Phase 3  Loop         — shot.mjs → compare to target → fix   (repeat 2–4×)
-Phase 4  Interact     — real hover / focus / clickable states, then --verify
+Phase 4  Interact     — real hover / focus / active states, then --verify
 Phase 5  Final checks — responsive, exact text, fidelity
 Phase 6  Motion       — optional, only if you ask
 ```
@@ -177,7 +187,7 @@ It reads the design, builds a draft, then loops (render → compare → refine),
 
 - **Verified interactivity.** `node scripts/shot.mjs --in page.html --verify` audits the page for dead controls (clickable-looking `<div>`s), missing `cursor: pointer`, and absent `:hover` / `:focus` rules — and reports `WARN` until they're fixed. Interactivity is treated as part of fidelity, not an afterthought.
 - **Quality-first assets (automatic).** Each image slot is resolved without asking you, by what looks sharpest and most specific: **assets you supplied** → **official brand SVG/logos** → a **crisp crop** from the source ([`crop.mjs`](scripts/crop.mjs)) → a real [Unsplash](https://unsplash.com) / `picsum.photos` photo → `placehold.co` as a last resort.
-- **Motion is opt-in.** Baseline interactivity (hover / focus / clickable) ships by default, but animation is **only** added when you explicitly ask — Phase 6 layers in restrained, self-contained GSAP via CDN. See [`references/animation.md`](references/animation.md).
+- **Motion is opt-in.** Baseline interactivity (hover / focus / active states) ships by default, but animation is **only** added when you explicitly ask — Phase 6 layers in restrained, self-contained GSAP via CDN. See [`references/animation.md`](references/animation.md).
 
 ## Star history
 
