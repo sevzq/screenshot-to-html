@@ -62,6 +62,12 @@ npx skills add sevzq/screenshot-to-html
 
 [原图](examples/landing-cloudflare/input.png) · [HTML 复刻](examples/landing-cloudflare/output.html) —— 黑橙巨字标题、完整导航、底部报告卡都是纯 HTML/CSS；只有那颗橙色测地球体是从原图裁切并溢出到右边缘的。两个 CTA、每个导航项、以及「Under attack?」按钮都是带 hover/focus 的真实控件。
 
+### ElevenLabs —— 语音库（应用界面）
+
+![ElevenLabs 语音库：原始截图 vs HTML 复刻](examples/app-elevenlabs/comparison.webp)
+
+[原图](examples/app-elevenlabs/input.png) · [HTML 复刻](examples/app-elevenlabs/output.html) —— 一个浅色的 Voices / Explore 工作区，按 ~1280px 编写：左侧边栏、顶栏、搜索 + 筛选标签、3×2 的 Trending 网格、「Handpicked」轮播，以及每周精选行。每个语音头像和语言旗标都是分层 CSS 渐变，所有图标均为内联 SVG；仅 Handpicked 卡片插画与「legendary voices」人像条是从原图裁切，其余卡片均为纯 CSS。完全可交互：Explore / My Voices 标签可切换，筛选标签可开关（标签行可拖拽滚动），Handpicked 行是带速度吸附与 ‹ › 箭头的指针拖拽轮播，促销横幅可关闭，搜索框可聚焦，每个导航项 / 卡片 / 控件都带 hover/focus —— 全部零依赖实现。_（[查看实时交互演示](assets/elevenlabs-demo.gif)。）_
+
 ### Modal —— 落地页（暗色 / 霓虹）
 
 ![Modal 落地页：原始截图 vs HTML 复刻](examples/landing-modal/comparison.webp)
@@ -109,16 +115,6 @@ npx skills add sevzq/screenshot-to-html
 ![Stripe 仪表盘：原始截图 vs HTML 复刻](examples/dashboard-stripe/comparison.webp)
 
 [原图](examples/dashboard-stripe/input.png) · [HTML 复刻](examples/dashboard-stripe/output.html) —— 图表是内联 SVG，堆叠条是 CSS；整屏零图片裁切、纯代码重建。可交互：侧边导航、Test mode 开关、日期/周期 pill 都有反馈，卡片和行悬停高亮。
-
-## 可选：用 GSAP 加动效
-
-动效是**可选项** —— agent 不会主动问、也不会主动加，只有你明确要求时才会加。需要时，Phase 6 会通过一个 CDN 标签叠加克制、自包含的 [GSAP](https://gsap.com/)（无构建步骤），而且动画始终是「动到」最终的 CSS 状态，所以关掉 JS 或开启 `prefers-reduced-motion` 的访客依然能看到完整页面。
-
-下面是给 Modal 复刻页加了一层可选动效：错峰的 Hero 入场、持续轻浮的算力立方体，以及带回弹的按钮 hover：
-
-![加了可选 GSAP 动效的 Modal 复刻页：错峰入场 + 浮动立方体](assets/gsap-modal.gif)
-
-[动效源码](examples/landing-modal/output.gsap.html) · [高清 MP4](assets/gsap-modal.mp4) —— 和[静态 Modal 复刻页](examples/landing-modal/output.html)用的是同一套 HTML，只多了约 20 行 GSAP。可复用的动效模式见 [`references/animation.md`](references/animation.md)。
 
 ## 工作原理
 

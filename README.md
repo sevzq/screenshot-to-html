@@ -62,6 +62,12 @@ Real app screenshot (left) vs the generated single-file HTML replica (right) —
 
 [Source](examples/landing-cloudflare/input.png) · [HTML replica](examples/landing-cloudflare/output.html) — the giant black-and-orange headline, full nav, and bottom report band are pure HTML/CSS; only the geodesic sphere is cropped from the source and bled off the right edge. Both CTAs, every nav item, and the "Under attack?" button are real controls with hover/focus.
 
+### ElevenLabs — Voices library (app UI)
+
+![ElevenLabs Voices library: original screenshot vs HTML replica](examples/app-elevenlabs/comparison.webp)
+
+[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) — a light Voices / Explore workspace authored at ~1280px: left sidebar, top bar, search + filter chips, a 3×2 trending grid, the "Handpicked" carousel, and the weekly spotlight row. Every voice avatar and language flag is a layered CSS gradient and all icons are inline SVG; only the handpicked card artworks and the "legendary voices" portrait strip are cropped from the source. Fully interactive: the Explore / My Voices tabs switch, filter chips toggle (and the chip row drag-scrolls), the Handpicked row is a pointer-drag carousel with velocity snap and ‹ › arrows, the promo banner dismisses, the search field focuses, and every nav item / card / control has hover/focus — all with zero dependencies. _([Watch the live interaction demo](assets/elevenlabs-demo.gif).)_
+
 ### Modal — landing page (dark / neon)
 
 ![Modal landing page: original screenshot vs HTML replica](examples/landing-modal/comparison.webp)
@@ -109,16 +115,6 @@ Real app screenshot (left) vs the generated single-file HTML replica (right) —
 ![Stripe dashboard: original screenshot vs HTML replica](examples/dashboard-stripe/comparison.webp)
 
 [Source](examples/dashboard-stripe/input.png) · [HTML replica](examples/dashboard-stripe/output.html) — the charts are inline SVG and the stacked bar is CSS; the entire screen is rebuilt as code with zero image crops. Interactive: the sidebar nav, the Test-mode switch, and the date/period pills all respond, and cards/rows highlight on hover.
-
-## Optional: motion with GSAP
-
-Motion is **opt-in** — the agent never asks for it and never adds it unless you do. When you ask, Phase 6 layers in restrained, self-contained [GSAP](https://gsap.com/) (one CDN tag, no build step) and always animates *into* the final CSS state, so no-JS and `prefers-reduced-motion` visitors still get the finished page.
-
-Here's the Modal replica with an optional motion pass — a staggered hero load-in, an ambient floating compute cube, and spring-y button hovers:
-
-![Modal replica with an optional GSAP motion pass: staggered hero load-in and a floating compute cube](assets/gsap-modal.gif)
-
-[Motion source](examples/landing-modal/output.gsap.html) · [hi-res MP4](assets/gsap-modal.mp4) — the exact same markup as the [static Modal replica](examples/landing-modal/output.html), plus ~20 lines of GSAP. Reusable patterns live in [`references/animation.md`](references/animation.md).
 
 ## How it works
 
