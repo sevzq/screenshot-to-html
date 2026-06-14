@@ -41,30 +41,30 @@ Works in **Cursor · Claude Code · Codex · Windsurf · Copilot** — and 40+ a
 
 ## Gallery
 
-Every replica below was produced by the skill — one file with inline CSS/JS (no framework, no build step) that passes `node scripts/shot.mjs --verify`. The **featured** examples play the *actual generated page* being used; the rest are side-by-side — real screenshot on the left, HTML replica on the right. Full sources in [`examples/`](examples/).
+Every replica below is **one self-contained HTML file** — inline CSS/JS, no framework, no build step — and passes `node scripts/shot.mjs --verify`. Each one is a side-by-side: **real screenshot on the left, HTML replica on the right**. The interactive app UIs are also recorded *live* in [**See them in action**](#see-them-in-action) at the end. Full sources in [`examples/`](examples/).
 
 ### Featured — full app UIs, fully interactive
 
 **ElevenLabs — Voices library**
 
-[![ElevenLabs Voices library — live interaction of the generated HTML replica](assets/elevenlabs-demo.gif)](examples/app-elevenlabs/output.html)
+[![ElevenLabs Voices library: original screenshot vs HTML replica](examples/app-elevenlabs/comparison.webp)](examples/app-elevenlabs/output.html)
 
 A light Voices / Explore workspace: sidebar, Explore / My Voices tabs, filter chips, a 3×2 trending grid, a drag-snap "Handpicked" carousel, and the weekly spotlight. Voice avatars are layered CSS gradients and icons are inline SVG; only the card artworks are cropped — and it's all one self-contained HTML file.
-[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) · [Side-by-side](examples/app-elevenlabs/comparison.webp)
+[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) · [▶ Watch it live](#see-them-in-action)
 
 **Spotify — web player (dark)**
 
-[![Spotify web player — live interaction of the generated HTML replica](assets/spotify-demo.gif)](examples/app-spotify/output.html)
+[![Spotify web player: original screenshot vs HTML replica](examples/app-spotify/comparison.webp)](examples/app-spotify/output.html)
 
 A dark three-pane player; every cover is real imagery cropped from the source, all icons inline SVG. Rows reveal a play glyph on hover, the transport (play / shuffle / repeat) toggles, the now-playing panel collapses, and volume is a real slider.
-[Source](examples/app-spotify/input.png) · [HTML replica](examples/app-spotify/output.html) · [Side-by-side](examples/app-spotify/comparison.webp)
+[Source](examples/app-spotify/input.png) · [HTML replica](examples/app-spotify/output.html) · [▶ Watch it live](#see-them-in-action)
 
 **Airbnb — iOS app (mobile)**
 
-[![Airbnb iOS app — live interaction of the generated HTML replica](assets/airbnb-demo.gif)](examples/mobile-airbnb/output.html)
+[![Airbnb iOS app: original screenshot vs HTML replica](examples/mobile-airbnb/comparison.webp)](examples/mobile-airbnb/output.html)
 
 Authored at 393px @3x in a decorative iPhone frame. Every listing card is a swipeable photo carousel (drag, velocity snap, dot indicators, hover arrows), the hearts toggle with a tactile pop, and the bottom tab bar switches screens — all with zero dependencies.
-[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) · [Side-by-side](examples/mobile-airbnb/comparison.webp)
+[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) · [▶ Watch it live](#see-them-in-action)
 
 ### More examples
 
@@ -118,6 +118,28 @@ Hand-built HTML/CSS; only the product-UI card is lifted from the source. Nav + S
 [Source](examples/landing-linear/input.png) · [HTML replica](examples/landing-linear/output.html)
 
 More replicas — each with its source screenshot, single-file `output.html`, and a side-by-side `comparison.webp` — live in [`examples/`](examples/). New ones welcome via PR.
+
+### See them in action
+
+All three featured replicas are **single, self-contained HTML files** — here they are being *used*, recorded straight from the live pages (zero dependencies, zero edits):
+
+**ElevenLabs — Voices library**
+
+[![ElevenLabs Voices library — live interaction of the generated HTML replica](assets/elevenlabs-demo.gif)](examples/app-elevenlabs/output.html)
+
+**Spotify — web player (dark)**
+
+[![Spotify web player — live interaction of the generated HTML replica](assets/spotify-demo.gif)](examples/app-spotify/output.html)
+
+**Airbnb — iOS app (mobile)**
+
+<p align="center">
+  <img src="assets/airbnb-original.png" alt="Airbnb iOS app — original screenshot" height="600">
+  &nbsp;&nbsp;&nbsp;
+  <a href="examples/mobile-airbnb/output.html"><img src="assets/airbnb-demo.gif" alt="Airbnb iOS app — live interaction of the generated HTML replica" height="600"></a>
+</p>
+
+<p align="center"><sub>Original screenshot (left) · live HTML replica (right) — drag a card to swipe, tap a heart, switch tabs.</sub></p>
 
 > Like what you see? **[⭐ Star the repo](https://github.com/sevzq/screenshot-to-html)** — it helps others find it.
 

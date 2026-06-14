@@ -41,30 +41,30 @@ npx skills add sevzq/screenshot-to-html
 
 ## 案例展示
 
-下面每个复刻都由技能产出，是带内联 CSS/JS 的单一文件（无框架、无构建），并通过 `node scripts/shot.mjs --verify`。**精选**案例直接播放*生成页面*的真实交互；其余为并排对比 —— 左边真实截图，右边 HTML 复刻。完整源文件见 [`examples/`](examples/)。
+下面每个复刻都是**单一自包含 HTML 文件** —— 内联 CSS/JS，无框架、无构建 —— 并通过 `node scripts/shot.mjs --verify`。每个都是并排对比：**左边真实截图，右边 HTML 复刻**。可交互的应用界面还在文末的 [**真实交互演示**](#真实交互演示) 里录了实时操作。完整源文件见 [`examples/`](examples/)。
 
 ### 精选 —— 完整应用界面，完全可交互
 
 **ElevenLabs —— 语音库**
 
-[![ElevenLabs 语音库 —— 生成的 HTML 复刻的真实交互演示](assets/elevenlabs-demo.gif)](examples/app-elevenlabs/output.html)
+[![ElevenLabs 语音库：原始截图 vs HTML 复刻](examples/app-elevenlabs/comparison.webp)](examples/app-elevenlabs/output.html)
 
 浅色 Voices / Explore 工作区：侧边栏、Explore / My Voices 标签、筛选标签、3×2 Trending 网格、带速度吸附的「Handpicked」拖拽轮播，以及每周精选。语音头像是分层 CSS 渐变、图标是内联 SVG，仅卡片插画从原图裁切 —— 而且整页就是一个自包含 HTML 文件。
-[原图](examples/app-elevenlabs/input.png) · [HTML 复刻](examples/app-elevenlabs/output.html) · [并排对比](examples/app-elevenlabs/comparison.webp)
+[原图](examples/app-elevenlabs/input.png) · [HTML 复刻](examples/app-elevenlabs/output.html) · [▶ 看实时演示](#真实交互演示)
 
 **Spotify —— 网页播放器（暗色）**
 
-[![Spotify 网页播放器 —— 生成的 HTML 复刻的真实交互演示](assets/spotify-demo.gif)](examples/app-spotify/output.html)
+[![Spotify 网页播放器：原始截图 vs HTML 复刻](examples/app-spotify/comparison.webp)](examples/app-spotify/output.html)
 
 暗色三栏播放器；封面是从原图裁出的真实图像，图标全内联 SVG。歌曲行悬停出现播放图标，播放控制（播放 / 随机 / 循环）可切换，正在播放面板可收起，音量是真实滑块。
-[原图](examples/app-spotify/input.png) · [HTML 复刻](examples/app-spotify/output.html) · [并排对比](examples/app-spotify/comparison.webp)
+[原图](examples/app-spotify/input.png) · [HTML 复刻](examples/app-spotify/output.html) · [▶ 看实时演示](#真实交互演示)
 
 **Airbnb —— iOS App（移动端）**
 
-[![Airbnb iOS App —— 生成的 HTML 复刻的真实交互演示](assets/airbnb-demo.gif)](examples/mobile-airbnb/output.html)
+[![Airbnb iOS App：原始截图 vs HTML 复刻](examples/mobile-airbnb/comparison.webp)](examples/mobile-airbnb/output.html)
 
 按 393px @3x 编写并包进装饰性 iPhone 外框。每个房源卡片都是可滑动图片轮播（拖拽、速度吸附、圆点指示、悬停箭头），爱心带触感弹跳，底部 tab 栏切换屏幕 —— 全部零依赖。
-[原图](examples/mobile-airbnb/input.png) · [HTML 复刻](examples/mobile-airbnb/output.html) · [并排对比](examples/mobile-airbnb/comparison.webp)
+[原图](examples/mobile-airbnb/input.png) · [HTML 复刻](examples/mobile-airbnb/output.html) · [▶ 看实时演示](#真实交互演示)
 
 ### 更多案例
 
@@ -118,6 +118,28 @@ npx skills add sevzq/screenshot-to-html
 [原图](examples/landing-linear/input.png) · [HTML 复刻](examples/landing-linear/output.html)
 
 更多复刻 —— 含原始截图、单文件 `output.html` 和并排 `comparison.webp` —— 都在 [`examples/`](examples/)。欢迎 PR 新案例。
+
+### 真实交互演示
+
+三个精选复刻都是**单一自包含 HTML 文件** —— 下面是它们被真实操作的录屏，直接录自实时页面（零依赖、零修改）：
+
+**ElevenLabs —— 语音库**
+
+[![ElevenLabs 语音库 —— 生成的 HTML 复刻的真实交互演示](assets/elevenlabs-demo.gif)](examples/app-elevenlabs/output.html)
+
+**Spotify —— 网页播放器（暗色）**
+
+[![Spotify 网页播放器 —— 生成的 HTML 复刻的真实交互演示](assets/spotify-demo.gif)](examples/app-spotify/output.html)
+
+**Airbnb —— iOS App（移动端）**
+
+<p align="center">
+  <img src="assets/airbnb-original.png" alt="Airbnb iOS App —— 原始截图" height="600">
+  &nbsp;&nbsp;&nbsp;
+  <a href="examples/mobile-airbnb/output.html"><img src="assets/airbnb-demo.gif" alt="Airbnb iOS App —— 生成的 HTML 复刻的真实交互演示" height="600"></a>
+</p>
+
+<p align="center"><sub>左：原始截图 · 右：实时 HTML 复刻 —— 可拖拽滑动卡片、点爱心、切 tab。</sub></p>
 
 > 喜欢的话，**[⭐ 给个 Star](https://github.com/sevzq/screenshot-to-html)** —— 能帮更多人发现它。
 

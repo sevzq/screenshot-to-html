@@ -89,7 +89,7 @@
   .shot{aspect-ratio:2 / 1; background:var(--panel-2); border-bottom:1px solid var(--line);
     display:block; overflow:hidden; position:relative}
   .shot img{width:100%; height:100%; object-fit:contain; display:block}
-  .card.featured .shot{aspect-ratio:16 / 10; background:#000}
+  .card.featured .shot{aspect-ratio:16 / 10; background:var(--panel-2)}
   .badge{position:absolute; top:10px; left:10px; display:inline-flex; align-items:center; gap:6px;
     font-size:11px; font-weight:700; letter-spacing:.03em; color:#04130b; background:var(--green);
     padding:4px 9px; border-radius:99px}
@@ -109,6 +109,21 @@
   .links a.demo{color:var(--green); border-color:rgba(52,215,127,.4)}
   .links a.demo:hover{background:rgba(52,215,127,.1)}
   .links a svg{width:14px;height:14px}
+
+  /* live demos */
+  .demos{display:flex; flex-direction:column; gap:22px; max-width:980px; margin:0 auto}
+  .demo{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .demo .cap{display:flex; align-items:center; gap:9px; padding:13px 17px; border-bottom:1px solid var(--line)}
+  .demo .cap h3{margin:0; font-size:15px; letter-spacing:-.01em}
+  .demo .cap .live{margin-left:auto; display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase; color:var(--green)}
+  .demo .cap .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,215,127,.18)}
+  .demo .media{display:flex; justify-content:center; align-items:center; background:#000}
+  .demo .media img{display:block; width:100%; height:auto}
+  .demo.split .media{gap:26px; padding:26px 22px; background:radial-gradient(120% 120% at 50% 0%, #15181d, #000)}
+  .demo.split .media img{height:clamp(340px,52vw,560px); width:auto; border-radius:16px}
+  .demo .foot{padding:11px 17px; color:var(--muted-soft); font-size:12.5px; border-top:1px solid var(--line); text-align:center}
+  @media (max-width:560px){ .demo.split .media{flex-direction:column; gap:18px} .demo.split .media img{height:auto; width:min(74%,260px)} }
 
   footer{border-top:1px solid var(--line); margin-top:48px; padding:30px 0 60px; color:var(--muted-soft); font-size:13.5px}
   footer .row{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
@@ -158,7 +173,7 @@
   <section class="sec">
     <span class="kicker">Featured</span>
     <h2>Full app UIs, fully interactive</h2>
-    <p class="lead">Zero-dependency replicas — drag the carousels, toggle the controls, switch the tabs.</p>
+    <p class="lead">Zero-dependency replicas — open any one live, or watch the recordings below.</p>
     <div class="grid featured" id="featured"></div>
   </section>
 
@@ -167,6 +182,30 @@
     <h2>More replicas</h2>
     <p class="lead">Landing pages, dashboards, light &amp; dark, desktop &amp; mobile. Click any card to open the live HTML.</p>
     <div class="grid" id="more"></div>
+  </section>
+
+  <section class="sec" id="demos">
+    <span class="kicker">Live</span>
+    <h2>See them in action</h2>
+    <p class="lead">The three featured replicas are single, self-contained HTML files — here they are being <em>used</em>, recorded straight from the live pages.</p>
+    <div class="demos">
+      <figure class="demo">
+        <figcaption class="cap"><h3>ElevenLabs — Voices library</h3><span class="live"><span class="dot"></span> Live HTML</span></figcaption>
+        <a class="media" href="examples/app-elevenlabs/output.html" target="_blank" rel="noopener"><img loading="lazy" src="assets/elevenlabs-demo.gif" alt="ElevenLabs Voices library — live interaction of the generated HTML replica"></a>
+      </figure>
+      <figure class="demo">
+        <figcaption class="cap"><h3>Spotify — web player</h3><span class="live"><span class="dot"></span> Live HTML</span></figcaption>
+        <a class="media" href="examples/app-spotify/output.html" target="_blank" rel="noopener"><img loading="lazy" src="assets/spotify-demo.gif" alt="Spotify web player — live interaction of the generated HTML replica"></a>
+      </figure>
+      <figure class="demo split">
+        <figcaption class="cap"><h3>Airbnb — iOS app (mobile)</h3><span class="live"><span class="dot"></span> Live HTML</span></figcaption>
+        <div class="media">
+          <img loading="lazy" src="assets/airbnb-original.png" alt="Airbnb iOS app — original screenshot">
+          <a href="examples/mobile-airbnb/output.html" target="_blank" rel="noopener" aria-label="Open Airbnb live HTML"><img loading="lazy" src="assets/airbnb-demo.gif" alt="Airbnb iOS app — live interaction of the generated HTML replica"></a>
+        </div>
+        <figcaption class="foot">Original screenshot (left) · live HTML replica (right)</figcaption>
+      </figure>
+    </div>
   </section>
 </main>
 
@@ -216,15 +255,12 @@
   };
   function card(x, featured){
     const tags = x.tags.map(t=>`<span class="tag">${t}</span>`).join('');
-    const live = featured && x.demo;
     const badge = featured ? `<span class="badge">${ICON.bolt} Interactive</span>` : '';
-    const img = live ? `assets/${x.demo}` : `examples/${x.slug}/comparison.webp`;
-    const alt = live ? `${x.name} — live interaction of the generated HTML replica`
-                     : `${x.name}: original screenshot vs HTML replica`;
-    const compareLink = live ? `<a href="examples/${x.slug}/comparison.webp" target="_blank" rel="noopener">${ICON.compare} Side-by-side</a>` : '';
+    const alt = `${x.name}: original screenshot vs HTML replica`;
+    const liveLink = featured ? `<a class="demo" href="#demos">${ICON.play} Watch it live</a>` : '';
     return `<article class="card${featured ? ' featured' : ''}">
       <a class="shot" href="examples/${x.slug}/output.html" target="_blank" rel="noopener" aria-label="Open ${x.name} live HTML">
-        ${badge}<img loading="lazy" src="${img}" alt="${alt}">
+        ${badge}<img loading="lazy" src="examples/${x.slug}/comparison.webp" alt="${alt}">
       </a>
       <div class="body">
         <h3>${x.name}</h3>
@@ -233,7 +269,7 @@
         <div class="links">
           <a class="go" href="examples/${x.slug}/output.html" target="_blank" rel="noopener">Open live HTML ${ICON.go}</a>
           <a href="examples/${x.slug}/input.png" target="_blank" rel="noopener">${ICON.src} Source</a>
-          ${compareLink}
+          ${liveLink}
         </div>
       </div>
     </article>`;
