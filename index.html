@@ -89,6 +89,7 @@
   .shot{aspect-ratio:2 / 1; background:var(--panel-2); border-bottom:1px solid var(--line);
     display:block; overflow:hidden; position:relative}
   .shot img{width:100%; height:100%; object-fit:contain; display:block}
+  .card.featured .shot{aspect-ratio:16 / 10; background:#000}
   .badge{position:absolute; top:10px; left:10px; display:inline-flex; align-items:center; gap:6px;
     font-size:11px; font-weight:700; letter-spacing:.03em; color:#04130b; background:var(--green);
     padding:4px 9px; border-radius:99px}
@@ -211,14 +212,19 @@
     src:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>',
     play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
     bolt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
+    compare:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="14" rx="1.5"/><rect x="14" y="5" width="7" height="14" rx="1.5"/></svg>',
   };
   function card(x, featured){
     const tags = x.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+    const live = featured && x.demo;
     const badge = featured ? `<span class="badge">${ICON.bolt} Interactive</span>` : '';
-    const demo = x.demo ? `<a class="demo" href="assets/${x.demo}" target="_blank" rel="noopener">${ICON.play} Demo</a>` : '';
-    return `<article class="card">
+    const img = live ? `assets/${x.demo}` : `examples/${x.slug}/comparison.webp`;
+    const alt = live ? `${x.name} — live interaction of the generated HTML replica`
+                     : `${x.name}: original screenshot vs HTML replica`;
+    const compareLink = live ? `<a href="examples/${x.slug}/comparison.webp" target="_blank" rel="noopener">${ICON.compare} Side-by-side</a>` : '';
+    return `<article class="card${featured ? ' featured' : ''}">
       <a class="shot" href="examples/${x.slug}/output.html" target="_blank" rel="noopener" aria-label="Open ${x.name} live HTML">
-        ${badge}<img loading="lazy" src="examples/${x.slug}/comparison.webp" alt="${x.name}: original screenshot vs HTML replica">
+        ${badge}<img loading="lazy" src="${img}" alt="${alt}">
       </a>
       <div class="body">
         <h3>${x.name}</h3>
@@ -227,7 +233,7 @@
         <div class="links">
           <a class="go" href="examples/${x.slug}/output.html" target="_blank" rel="noopener">Open live HTML ${ICON.go}</a>
           <a href="examples/${x.slug}/input.png" target="_blank" rel="noopener">${ICON.src} Source</a>
-          ${demo}
+          ${compareLink}
         </div>
       </div>
     </article>`;
