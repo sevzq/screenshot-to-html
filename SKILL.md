@@ -133,6 +133,10 @@ alone ships a "webpage that's secretly an image." Make the replica behave like a
 - **Verify, don't assume:** `node scripts/shot.mjs --in <file> --verify` flags clickable-looking
   elements that are inert or missing a hover/focus state; `--states` captures hover/focus/open
   frames. Fix every dead control. Full detail in [reference.md](reference.md).
+- **Tactile depth (zero-dependency).** For the controls the screenshot *implies* — swipeable
+  galleries, sliders, a heart that pops, drag-to-snap decks — make them *feel* hand-built with
+  plain JS + CSS (pointer drag, velocity snap, press/scale). No motion library needed for any of
+  it. Patterns and copy-paste snippets in [references/interaction.md](references/interaction.md).
 
 ### Phase 5 — Final checks
 - Side-by-side render vs target reads as "the same page."
@@ -144,7 +148,9 @@ alone ships a "webpage that's secretly an image." Make the replica behave like a
   out of the deliverable). Report the final file path + final render.
 
 ### Phase 6 — Enhance with motion (optional, only on request)
-Interactivity (Phase 4) ships by default; **GSAP motion/animation does not.** Do not add motion
+Interactivity (Phase 4) ships by default; **GSAP motion/animation does not.** Rich tactile
+feedback — drag, snap, like-pop — needs **no library** ([references/interaction.md](references/interaction.md));
+GSAP is only for heavier, explicitly-requested choreography. Do not add motion
 on your own, and never ask about it — only enhance when the user explicitly requests animation ("加动效",
 "make it animated"). Then add **restrained** GSAP animation — high-impact moments,
 not AI-slop everywhere. Read [references/animation.md](references/animation.md) for
@@ -199,5 +205,7 @@ Both stacks:
 ## Additional resources
 - [reference.md](reference.md) — analysis rubric, comparison methodology,
   computed-state traps, fonts/colors/assets, the four-layer asset strategy.
+- [references/interaction.md](references/interaction.md) — zero-dependency tactile-polish
+  standard (Phase 4): pointer-drag primitive, swipe/carousel snap, like-pop, toggles, reduced-motion.
 - [references/animation.md](references/animation.md) — optional GSAP motion patterns
   (Phase 6): CDN setup, load-in/scroll/hover recipes, reduced-motion, pitfalls.

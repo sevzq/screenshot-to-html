@@ -96,7 +96,7 @@ Real app screenshot (left) vs the generated single-file HTML replica (right) —
 
 ![Airbnb iOS app: original screenshot vs HTML replica](examples/mobile-airbnb/comparison.webp)
 
-[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) — authored at 393px @3x and wrapped in a decorative iPhone frame; the listing photos and 3D category icons are cropped from the source. Interactive prototype: the bottom tab bar switches screens inside the frame, the Homes / Experiences / Services tabs switch, and the hearts toggle.
+[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) — authored at 393px @3x and wrapped in a decorative iPhone frame; each card's lead photo and the 3D category icons are cropped from the source (extra carousel shots are royalty-free Unsplash interiors). Fully interactive: every listing card is a swipeable photo carousel (drag to flick through, velocity snap, dot indicators, hover arrows), the hearts toggle with a tactile pop, and the bottom tab bar / category tabs switch the screen inside the frame — all with zero dependencies. _([Watch the live interaction demo](assets/airbnb-demo.gif).)_
 
 ### Linear — landing page
 

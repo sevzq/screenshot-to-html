@@ -124,6 +124,48 @@
     border-radius:14px; overflow:hidden; background:#eee;
   }
   .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* swipeable photo carousel (real Airbnb behavior; first slide = the screenshot) */
+  .gallery{
+    position:absolute; inset:0; z-index:1;
+    cursor:grab; touch-action:pan-y;
+    -webkit-user-select:none; user-select:none;
+  }
+  .gallery:active{ cursor:grabbing; }
+  .gtrack{ display:flex; height:100%; will-change:transform; }
+  .gtrack img{ flex:0 0 100%; -webkit-user-drag:none; pointer-events:none; }
+
+  .gdots{
+    position:absolute; left:0; right:0; bottom:8px; z-index:3;
+    display:flex; justify-content:center; gap:4px; pointer-events:none;
+  }
+  .gdots i{
+    width:5px; height:5px; border-radius:50%;
+    background:rgba(255,255,255,.55); box-shadow:0 0 2px rgba(0,0,0,.35);
+    transition:transform .2s ease, background-color .2s ease;
+  }
+  .gdots i.on{ background:#fff; transform:scale(1.18); }
+
+  /* hover arrows — desktop affordance; hidden on the resting (iOS) frame */
+  .garrow{
+    position:absolute; top:50%; z-index:3;
+    width:26px; height:26px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.92); color:#222; border:0; padding:0;
+    box-shadow:0 1px 4px rgba(0,0,0,.28);
+    cursor:pointer; opacity:0; pointer-events:none;
+    transition:opacity .15s ease, transform .15s ease, background-color .15s ease;
+  }
+  .garrow.prev{ left:7px; transform:translateY(-50%) translateX(-4px); }
+  .garrow.next{ right:7px; transform:translateY(-50%) translateX(4px); }
+  .garrow svg{ display:block; }
+  @media (hover:hover) and (pointer:fine){
+    .card:hover .garrow:not([disabled]){
+      opacity:1; pointer-events:auto; transform:translateY(-50%) translateX(0);
+    }
+    .garrow:hover{ background:#fff; }
+    .garrow:active{ transform:translateY(-50%) scale(.9); }
+  }
   .gfav{
     position:absolute; top:9px; left:9px;
     background:#fff; color:#222; font-size:12px; font-weight:600;
@@ -230,8 +272,22 @@
   .card:active{ transform:translateY(-1px); }
   .heart:active{ transform:scale(.9); }
 
-  /* saved heart */
+  /* saved heart + tactile "pop" */
+  .heart svg{ transition:transform 140ms ease; }
   .heart.is-saved svg{ fill:var(--pink); stroke:#fff; }
+  .heart.pop svg{ animation:heartpop .45s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes heartpop{
+    0%{ transform:scale(1); } 30%{ transform:scale(1.32); }
+    55%{ transform:scale(.9); } 100%{ transform:scale(1); }
+  }
+  .heart::after{
+    content:""; position:absolute; inset:-3px; border-radius:50%;
+    border:2px solid var(--pink); opacity:0; transform:scale(.4); pointer-events:none;
+  }
+  .heart.pop::after{ animation:heartring .55s ease-out; }
+  @keyframes heartring{
+    0%{ opacity:.5; transform:scale(.4); } 100%{ opacity:0; transform:scale(1.7); }
+  }
 
   /* keyboard focus ring */
   .search:focus, .cat:focus, .card-link:focus, .heart:focus, .tab:focus{ outline:none; }
@@ -242,7 +298,8 @@
   .search:focus-visible{ border-radius:30px; }
 
   @media (prefers-reduced-motion: reduce){
-    .search,.cat,.tab,.card,.photo,.heart,.card-link{ transition:none !important; }
+    .search,.cat,.tab,.card,.photo,.heart,.heart svg,.card-link,.gdots i,.garrow{ transition:none !important; }
+    .heart.pop svg,.heart.pop::after{ animation:none !important; }
     .search:hover,.search:active,
     .card:hover,.card:focus-within,.card:active,
     .heart:hover,.heart:active,.cat:active,.tab:active{ transform:none !important; }
@@ -314,29 +371,47 @@
         </h2>
         <div class="rail">
           <article class="card">
-            <a class="card-link" href="#listing">
-              <div class="photo">
-                <img src="assets/philly-bedroom.png" alt="Apartment in Center City">
-                <span class="gfav">Guest favorite</span>
+            <div class="photo">
+              <div class="gallery" role="group" aria-roledescription="carousel" aria-label="Apartment in Center City — photos">
+                <div class="gtrack">
+                  <img src="assets/philly-bedroom.png" alt="Apartment in Center City" draggable="false">
+                  <img src="assets/philly-bedroom-2.jpg" alt="Bedroom with tufted bench" draggable="false" loading="lazy">
+                  <img src="assets/philly-bedroom-3.jpg" alt="Bedroom with framed art" draggable="false" loading="lazy">
+                </div>
               </div>
-              <p class="ctitle">Apartment in Center City</p>
-              <p class="cmeta">$228 for 2 nights <span class="star">★</span>4.97</p>
-            </a>
+              <span class="gfav">Guest favorite</span>
+              <button class="garrow prev" type="button" aria-label="Previous photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M7 1 1 7l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="garrow next" type="button" aria-label="Next photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M1 1l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div class="gdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+            </div>
             <button class="heart" type="button" aria-label="Save Apartment in Center City to a wishlist" aria-pressed="false">
               <svg width="23" height="23" viewBox="0 0 24 24" fill="rgba(0,0,0,.45)" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
             </button>
+            <a class="card-link" href="#listing">
+              <p class="ctitle">Apartment in Center City</p>
+              <p class="cmeta">$228 for 2 nights <span class="star">★</span>4.97</p>
+            </a>
           </article>
           <article class="card">
-            <a class="card-link" href="#listing">
-              <div class="photo">
-                <img src="assets/philly-pool.png" alt="Place to stay in Strawberry Mansion">
+            <div class="photo">
+              <div class="gallery" role="group" aria-roledescription="carousel" aria-label="Place to stay in Strawberry Mansion — photos">
+                <div class="gtrack">
+                  <img src="assets/philly-pool.png" alt="Place to stay in Strawberry Mansion" draggable="false">
+                  <img src="assets/philly-pool-2.jpg" alt="Living room with sofa" draggable="false" loading="lazy">
+                  <img src="assets/philly-pool-3.jpg" alt="Living room with coffee table" draggable="false" loading="lazy">
+                </div>
               </div>
-              <p class="ctitle">Place to stay in Strawberry Mansion</p>
-              <p class="cmeta">$122 for 2 nights <span class="star">★</span>4.8</p>
-            </a>
+              <button class="garrow prev" type="button" aria-label="Previous photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M7 1 1 7l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="garrow next" type="button" aria-label="Next photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M1 1l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div class="gdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+            </div>
             <button class="heart" type="button" aria-label="Save Place to stay in Strawberry Mansion to a wishlist" aria-pressed="false">
               <svg width="23" height="23" viewBox="0 0 24 24" fill="rgba(0,0,0,.45)" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
             </button>
+            <a class="card-link" href="#listing">
+              <p class="ctitle">Place to stay in Strawberry Mansion</p>
+              <p class="cmeta">$122 for 2 nights <span class="star">★</span>4.8</p>
+            </a>
           </article>
           <article class="card">
             <a class="card-link" href="#listing">
@@ -356,30 +431,48 @@
         </h2>
         <div class="rail">
           <article class="card">
-            <a class="card-link" href="#listing">
-              <div class="photo">
-                <img src="assets/miami-tv.png" alt="Apartment in Miami">
-                <span class="gfav">Guest favorite</span>
+            <div class="photo">
+              <div class="gallery" role="group" aria-roledescription="carousel" aria-label="Apartment in Miami — photos">
+                <div class="gtrack">
+                  <img src="assets/miami-tv.png" alt="Apartment in Miami" draggable="false">
+                  <img src="assets/miami-tv-2.jpg" alt="Living room with TV" draggable="false" loading="lazy">
+                  <img src="assets/miami-tv-3.jpg" alt="Bright living room" draggable="false" loading="lazy">
+                </div>
               </div>
-              <p class="ctitle one">Apartment in Miami</p>
-              <p class="cmeta">$381 for 2 nights <span class="star">★</span>5.0</p>
-            </a>
+              <span class="gfav">Guest favorite</span>
+              <button class="garrow prev" type="button" aria-label="Previous photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M7 1 1 7l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="garrow next" type="button" aria-label="Next photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M1 1l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div class="gdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+            </div>
             <button class="heart" type="button" aria-label="Save Apartment in Miami to a wishlist" aria-pressed="false">
               <svg width="23" height="23" viewBox="0 0 24 24" fill="rgba(0,0,0,.45)" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
             </button>
+            <a class="card-link" href="#listing">
+              <p class="ctitle one">Apartment in Miami</p>
+              <p class="cmeta">$381 for 2 nights <span class="star">★</span>5.0</p>
+            </a>
           </article>
           <article class="card">
-            <a class="card-link" href="#listing">
-              <div class="photo">
-                <img src="assets/miami-white.png" alt="Place to stay in Miami">
-                <span class="gfav">Guest favorite</span>
+            <div class="photo">
+              <div class="gallery" role="group" aria-roledescription="carousel" aria-label="Place to stay in Miami — photos">
+                <div class="gtrack">
+                  <img src="assets/miami-white.png" alt="Place to stay in Miami" draggable="false">
+                  <img src="assets/miami-white-2.jpg" alt="Bright bedroom" draggable="false" loading="lazy">
+                  <img src="assets/miami-white-3.jpg" alt="Bedroom with wood floor" draggable="false" loading="lazy">
+                </div>
               </div>
-              <p class="ctitle one">Place to stay in Miami</p>
-              <p class="cmeta">$112 for 2 nights <span class="star">★</span>4.99</p>
-            </a>
+              <span class="gfav">Guest favorite</span>
+              <button class="garrow prev" type="button" aria-label="Previous photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M7 1 1 7l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="garrow next" type="button" aria-label="Next photo"><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M1 1l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div class="gdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+            </div>
             <button class="heart" type="button" aria-label="Save Place to stay in Miami to a wishlist" aria-pressed="false">
               <svg width="23" height="23" viewBox="0 0 24 24" fill="rgba(0,0,0,.45)" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
             </button>
+            <a class="card-link" href="#listing">
+              <p class="ctitle one">Place to stay in Miami</p>
+              <p class="cmeta">$112 for 2 nights <span class="star">★</span>4.99</p>
+            </a>
           </article>
           <article class="card">
             <a class="card-link" href="#listing">
@@ -508,12 +601,82 @@
       });
     });
 
+    var REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Heart: filled/outline toggle + tactile "pop" (scale + ring burst)
     Array.prototype.slice.call(document.querySelectorAll('.heart')).forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
         var saved = btn.classList.toggle('is-saved');
         btn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+        if(saved && !REDUCE){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
       });
     });
+
+    // Swipeable photo carousels — pointer drag + velocity snap + dots + hover arrows.
+    // Vanilla JS, no library. First slide stays the source photo, so the resting frame matches.
+    function initGallery(g){
+      var track = g.querySelector('.gtrack');
+      var n = track.children.length;
+      if(n < 2) return;
+      var photo = g.closest('.photo');
+      var dots = photo.querySelector('.gdots');
+      var prev = photo.querySelector('.garrow.prev');
+      var next = photo.querySelector('.garrow.next');
+      var i = 0, drag = null, w = 1;
+
+      function sync(){
+        if(dots) Array.prototype.forEach.call(dots.children, function(d, k){ d.classList.toggle('on', k === i); });
+        if(prev) prev.disabled = (i === 0);
+        if(next) next.disabled = (i === n - 1);
+      }
+      function place(anim){
+        track.style.transition = (anim && !REDUCE) ? 'transform .42s cubic-bezier(.22,1,.36,1)' : 'none';
+        track.style.transform = 'translateX(' + (-i * 100) + '%)';
+        sync();
+      }
+      function go(k){ i = Math.max(0, Math.min(n - 1, k)); place(true); }
+
+      if(prev) prev.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); go(i - 1); });
+      if(next) next.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); go(i + 1); });
+
+      g.addEventListener('pointerdown', function(e){
+        if(e.button != null && e.button > 0) return;
+        w = g.clientWidth || 1;
+        if(g.setPointerCapture){ try{ g.setPointerCapture(e.pointerId); }catch(_){} }
+        drag = { id:e.pointerId, x:e.clientX, y:e.clientY, moved:false, s:[] };
+      });
+      g.addEventListener('pointermove', function(e){
+        if(!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if(!drag.moved){
+          if(Math.abs(dx) < 6 || Math.abs(dx) <= Math.abs(dy)) return; // wait for clear horizontal intent
+          drag.moved = true;
+        }
+        var now = performance.now();
+        drag.s.push({ t:now, x:e.clientX });
+        while(drag.s.length > 2 && now - drag.s[0].t > 110) drag.s.shift();
+        var off = dx;
+        if((i === 0 && dx > 0) || (i === n - 1 && dx < 0)) off = dx * 0.35; // rubber-band at the ends
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(calc(' + (-i * 100) + '% + ' + off + 'px))';
+      });
+      function end(e){
+        if(!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.x, s = drag.s, vx = 0, moved = drag.moved;
+        if(s.length > 1){ var a = s[0], b = s[s.length - 1]; vx = (b.x - a.x) / Math.max(1, b.t - a.t); }
+        drag = null;
+        if(!moved) return;                       // a tap, not a swipe
+        if((dx < -w * 0.22 || vx < -0.45) && i < n - 1) i++;
+        else if((dx > w * 0.22 || vx > 0.45) && i > 0) i--;
+        place(true);
+      }
+      g.addEventListener('pointerup', end);
+      g.addEventListener('pointercancel', end);
+
+      place(false);
+    }
+    Array.prototype.slice.call(document.querySelectorAll('.gallery')).forEach(initGallery);
   })();
   </script>
 </body>

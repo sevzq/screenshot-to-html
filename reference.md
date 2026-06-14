@@ -170,6 +170,12 @@ contrast; honor `prefers-reduced-motion` for transitions.
 elements that are inert or lack a hover/focus state; `--states` captures hover / focus / open
 frames for review and the gallery. Fix every dead control before delivery.
 
+**Tactile depth (dependency-free).** When the frame implies a richer gesture — a swipeable photo
+gallery, a drag-to-snap deck, a slider, a heart that pops — make it *feel* hand-built with a small
+pointer-drag primitive (velocity + snap) and CSS keyframes. This is all plain JS + CSS: **do not
+reach for a motion library for tactile feedback.** Recipes and copy-paste snippets in
+[references/interaction.md](references/interaction.md).
+
 Optional GSAP motion is separate and **on request only** — see Phase 6 and
 [references/animation.md](references/animation.md). When capturing, `shot.mjs` freezes animations
 (`--still`, default) for a stable settled frame; pass `--motion` to keep them running.

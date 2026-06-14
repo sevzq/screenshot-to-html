@@ -96,7 +96,7 @@ npx skills add sevzq/screenshot-to-html
 
 ![Airbnb iOS App：原始截图 vs HTML 复刻](examples/mobile-airbnb/comparison.webp)
 
-[原图](examples/mobile-airbnb/input.png) · [HTML 复刻](examples/mobile-airbnb/output.html) —— 按 393px @3x 编写并包进一个装饰性 iPhone 外框；房源照片和 3D 分类图标从原图裁切。可交互原型：底部 tab 栏在外框内切换屏幕，Homes / Experiences / Services 顶部 tab 可切换，爱心可收藏。
+[原图](examples/mobile-airbnb/input.png) · [HTML 复刻](examples/mobile-airbnb/output.html) —— 按 393px @3x 编写并包进一个装饰性 iPhone 外框；每张卡片的首图与 3D 分类图标均从原图裁切（轮播里的额外照片为可免费商用的 Unsplash 室内图）。完全可交互：每个房源卡片都是可滑动的图片轮播（拖拽切换、按速度吸附、圆点指示、悬停箭头），爱心收藏带触感「弹跳」反馈，底部 tab 栏 / 顶部分类 tab 在外框内切换屏幕 —— 全部零依赖实现。_（[查看实时交互演示](assets/airbnb-demo.gif)。）_
 
 ### Linear —— 落地页
 
