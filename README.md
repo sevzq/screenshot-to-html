@@ -6,15 +6,15 @@
 
 **Drop a screenshot — get back a pixel-faithful, fully interactive single-file HTML page.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-3da639.svg)](LICENSE)
-[![Agent Skill](https://img.shields.io/badge/Agent-Skill-2b6cb0)](https://agentskills.io)
 [![skills.sh Compatible](https://img.shields.io/badge/skills.sh-Compatible-22c55e)](https://skills.sh)
-[![Agent-Agnostic](https://img.shields.io/badge/Agent-Agnostic-7c3aed)](#install)
-[![Verified with Chrome](https://img.shields.io/badge/interactive-verified-000000)](#under-the-hood)
+[![Agent-Agnostic](https://img.shields.io/badge/agent-agnostic-7c3aed)](#install)
+[![Verified in real Chrome](https://img.shields.io/badge/interactive-verified-000000)](#under-the-hood)
+[![License: MIT](https://img.shields.io/badge/License-MIT-3da639.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/sevzq/screenshot-to-html?style=social)](https://github.com/sevzq/screenshot-to-html/stargazers)
 
 <br>
 
-An AI coding-agent skill that rebuilds any UI screenshot as **one clean, self-contained, interactive HTML file**. Not a one-shot guess — a **rendered-state loop**: build → screenshot the result with real Chrome → compare to your image → refine, until `render(code) ≈ target`. Then it wires up real hover / focus / click states and **verifies them with headless Chrome**.
+An AI coding-agent skill that rebuilds any UI screenshot as **one clean, self-contained, interactive HTML file**. Not a one-shot guess — a **render → screenshot → compare → refine loop** in real Chrome, until `render(code) ≈ target`. Then it wires up real hover / focus / click states and **verifies them headless**.
 
 ```
 npx skills add sevzq/screenshot-to-html
@@ -22,7 +22,7 @@ npx skills add sevzq/screenshot-to-html
 
 Works in **Cursor · Claude Code · Codex · Windsurf · Copilot** — and 40+ agents.
 
-[See the gallery](#gallery) · [Install](#install) · [How it works](#how-it-works) · [Why it's different](#why-its-different)
+[Gallery](#gallery) · [Install](#install) · [How it works](#how-it-works) · [Why it's different](#why-its-different)
 
 </div>
 
@@ -33,88 +33,140 @@ Works in **Cursor · Claude Code · Codex · Windsurf · Copilot** — and 40+ a
 </p>
 
 <p align="center"><sub>
-  ▲ Install the skill, open <b>Claude Code</b> (or Cursor / Codex), paste a screenshot, and type one line. The skill reads the image, writes a single <code>output.html</code>, and <b>verifies the interactions in real Chrome</b> — then reveals the finished page.
+  ▲ Install the skill, open <b>Claude Code</b> (or Cursor / Codex), paste a screenshot, type one line — the skill writes a single <code>output.html</code> and <b>verifies the interactions in real Chrome</b>.
   &nbsp;·&nbsp; <a href="assets/hero.mp4">Hi-res MP4</a>
 </sub></p>
 
-> **Every replica in this README was produced by the skill** and verified interactive with headless Chrome — each is a single HTML file with inline CSS/JS, no framework, no build step.
-
 ---
+
+## Gallery
+
+Real app screenshot (left) vs the generated **single-file HTML replica** (right). Every replica below was produced by the skill, is a single file with inline CSS/JS (no framework, no build step), and passes `node scripts/shot.mjs --verify`. Full sources in [`examples/`](examples/).
+
+### Featured — full app UIs, fully interactive
+
+**ElevenLabs — Voices library**
+
+[![ElevenLabs Voices library: original screenshot vs HTML replica](examples/app-elevenlabs/comparison.webp)](examples/app-elevenlabs/output.html)
+
+A light Voices / Explore workspace: sidebar, Explore / My Voices tabs, filter chips, a 3×2 trending grid, a drag-snap "Handpicked" carousel, and the weekly spotlight. Voice avatars are layered CSS gradients and icons are inline SVG; only the card artworks are cropped.
+[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) · [▶ Live demo](assets/elevenlabs-demo.gif)
+
+**Spotify — web player (dark)**
+
+[![Spotify web player: original screenshot vs HTML replica](examples/app-spotify/comparison.webp)](examples/app-spotify/output.html)
+
+A dark three-pane player; every cover is real imagery cropped from the source, all icons inline SVG. Rows reveal a play glyph on hover, the transport (play / shuffle / repeat) toggles, the now-playing panel collapses, and volume is a real slider.
+[Source](examples/app-spotify/input.png) · [HTML replica](examples/app-spotify/output.html) · [▶ Live demo](assets/spotify-demo.gif)
+
+**Airbnb — iOS app (mobile)**
+
+[![Airbnb iOS app: original screenshot vs HTML replica](examples/mobile-airbnb/comparison.webp)](examples/mobile-airbnb/output.html)
+
+Authored at 393px @3x in a decorative iPhone frame. Every listing card is a swipeable photo carousel (drag, velocity snap, dot indicators, hover arrows), the hearts toggle with a tactile pop, and the bottom tab bar switches screens — all with zero dependencies.
+[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) · [▶ Live demo](assets/airbnb-demo.gif)
+
+### More examples
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Cloudflare — landing page**
+
+[![Cloudflare landing page replica](examples/landing-cloudflare/comparison.webp)](examples/landing-cloudflare/output.html)
+
+Giant black-and-orange headline and full nav in pure CSS; only the geodesic sphere is cropped from the source.
+[Source](examples/landing-cloudflare/input.png) · [HTML](examples/landing-cloudflare/output.html)
+
+</td>
+<td width="50%" valign="top">
+
+**Modal — landing page (dark / neon)**
+
+[![Modal landing page replica](examples/landing-modal/comparison.webp)](examples/landing-modal/output.html)
+
+A pure-black hero with a spring-green accent; the glowing cube is `screen`-blended onto the black so there's no seam.
+[Source](examples/landing-modal/input.png) · [HTML](examples/landing-modal/output.html)
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**Clay — landing page (colorful)**
+
+[![Clay landing page replica](examples/landing-clay/comparison.webp)](examples/landing-clay/output.html)
+
+A cream hero on white with a huge display headline; four clay sculptures are `multiply`-blended across the panel edge.
+[Source](examples/landing-clay/input.png) · [HTML](examples/landing-clay/output.html)
+
+</td>
+<td width="50%" valign="top">
+
+**Stripe — landing page**
+
+[![Stripe landing page replica](examples/landing-stripe/comparison.webp)](examples/landing-stripe/output.html)
+
+The diagonal gradient and multiply-blended headline are pure CSS; only the checkout/dashboard cluster is cropped. Working email field.
+[Source](examples/landing-stripe/input.png) · [HTML](examples/landing-stripe/output.html)
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**Tesla — charging screen (iOS)**
+
+[![Tesla charging screen replica](examples/mobile-tesla/comparison.webp)](examples/mobile-tesla/output.html)
+
+393px @3x in an iPhone frame; the Model 3 render is color-matched to the screen. The charge-limit slider is a real `range` input.
+[Source](examples/mobile-tesla/input.png) · [HTML](examples/mobile-tesla/output.html)
+
+</td>
+<td width="50%" valign="top">
+
+**Stripe — dashboard**
+
+[![Stripe dashboard replica](examples/dashboard-stripe/comparison.webp)](examples/dashboard-stripe/output.html)
+
+Rebuilt entirely as code (inline-SVG charts, CSS bars), zero crops. The sidebar nav, Test-mode switch, and date pills all respond.
+[Source](examples/dashboard-stripe/input.png) · [HTML](examples/dashboard-stripe/output.html)
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**Linear — landing page**
+
+[![Linear landing page replica](examples/landing-linear/comparison.webp)](examples/landing-linear/output.html)
+
+Hand-built HTML/CSS; only the product-UI card is lifted from the source. Nav + Sign-up have hover/focus and links smooth-scroll.
+[Source](examples/landing-linear/input.png) · [HTML](examples/landing-linear/output.html)
+
+</td>
+<td width="50%" valign="top">
+
+**More in [`examples/`](examples/)**
+
+Each folder ships the source screenshot, the single-file `output.html`, and a side-by-side `comparison.webp`. New replicas welcome via PR.
+
+</td>
+</tr>
+</table>
+
+> Like what you see? **[⭐ Star the repo](https://github.com/sevzq/screenshot-to-html)** — it helps others find it.
 
 ## Why it's different
 
 Most "screenshot to code" tools generate once and stop. `screenshot-to-html` optimizes what you actually *see* — and what you can actually *click*:
 
-- **Pixel-faithful by loop, not luck** — it screenshots its own output with real Chrome and diffs against your image region-by-region (layout → spacing → color → type → polish), refining until it matches. Semantic HTML + design tokens, not a pile of absolute-positioned magic numbers.
-- **Actually interactive — and verified** — real `<button>` / `<a>`, hover / focus / active states, and working tabs, nav, and modals where the screenshot implies them. Audited with `shot.mjs --verify`, which fails the build on dead controls. Not a static picture pretending to be a page.
+- **Pixel-faithful by loop, not luck** — it screenshots its own output with real Chrome and diffs against your image region-by-region (layout → spacing → color → type → polish), refining until it matches. Semantic HTML + design tokens, not absolute-positioned magic numbers.
+- **Actually interactive — and verified** — real `<button>` / `<a>`, hover / focus / active states, working tabs, nav, and carousels where the screenshot implies them. Audited with `shot.mjs --verify`, which fails the build on dead controls.
 - **One self-contained file** — inline CSS/JS, zero dependencies, zero build step. Open it anywhere.
-- **Sharp assets, automatically** — every image slot is filled by what looks best: a crisp crop from your screenshot, an official logo SVG, or a real stock photo — never a blurry stand-in or an AI-slop silhouette. No questions, no manual steps.
+- **Sharp assets, automatically** — every image slot is filled by what looks best: a crisp crop from your screenshot, an official logo SVG, or a real stock photo — never a blurry stand-in or an AI-slop silhouette.
 - **Real size & responsive** — authored at the true design width with fluid units (`clamp()` / `max-width`), so it opens correctly at 100% zoom and adapts. Never a fixed miniature.
-- **Runs in the agent you already use** — no web app to deploy, no separate API key, no infra. It's just a skill.
-
-## Gallery
-
-Real app screenshot (left) vs the generated single-file HTML replica (right) — light & dark, desktop & mobile, landing pages, dashboards, and full app UIs. Full sources in [`examples/`](examples/). Every replica is **interactive** and passes `node scripts/shot.mjs --verify`.
-
-### Cloudflare — landing page
-
-![Cloudflare landing page: original screenshot vs HTML replica](examples/landing-cloudflare/comparison.webp)
-
-[Source](examples/landing-cloudflare/input.png) · [HTML replica](examples/landing-cloudflare/output.html) — the giant black-and-orange headline, full nav, and bottom report band are pure HTML/CSS; only the geodesic sphere is cropped from the source and bled off the right edge. Both CTAs, every nav item, and the "Under attack?" button are real controls with hover/focus.
-
-### ElevenLabs — Voices library (app UI)
-
-![ElevenLabs Voices library: original screenshot vs HTML replica](examples/app-elevenlabs/comparison.webp)
-
-[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) — a light Voices / Explore workspace authored at ~1280px: left sidebar, top bar, search + filter chips, a 3×2 trending grid, the "Handpicked" carousel, and the weekly spotlight row. Every voice avatar and language flag is a layered CSS gradient and all icons are inline SVG; only the handpicked card artworks and the "legendary voices" portrait strip are cropped from the source. Fully interactive: the Explore / My Voices tabs switch, filter chips toggle (and the chip row drag-scrolls), the Handpicked row is a pointer-drag carousel with velocity snap and ‹ › arrows, the promo banner dismisses, the search field focuses, and every nav item / card / control has hover/focus — all with zero dependencies. _([Watch the live interaction demo](assets/elevenlabs-demo.gif).)_
-
-### Modal — landing page (dark / neon)
-
-![Modal landing page: original screenshot vs HTML replica](examples/landing-modal/comparison.webp)
-
-[Source](examples/landing-modal/input.png) · [HTML replica](examples/landing-modal/output.html) — a pure-black hero with a spring-green accent; the glowing translucent cube is cropped from the source and `screen`-blended onto the black so there's no seam, and the customer logo strip is real imagery. The announcement link, floating nav pill, and both hero buttons are real controls with hover/focus.
-
-### Clay — landing page (colorful)
-
-![Clay landing page: original screenshot vs HTML replica](examples/landing-clay/comparison.webp)
-
-[Source](examples/landing-clay/input.png) · [HTML replica](examples/landing-clay/output.html) — a cream hero panel on white with a huge display headline; the four colorful clay sculptures are cropped and `multiply`-blended so they straddle the panel edge cleanly, and the 20-brand logo wall is real imagery. Nav, ⌘K search, "Get a demo", and Sign-up all have hover/focus.
-
-### Tesla — charging screen (iOS / mobile)
-
-![Tesla charging screen: original screenshot vs HTML replica](examples/mobile-tesla/comparison.webp)
-
-[Source](examples/mobile-tesla/input.png) · [HTML replica](examples/mobile-tesla/output.html) — authored at 393px @3x in a decorative iPhone frame; the black Model 3 render with its green charge cable is cropped and color-matched to the screen so it's seamless. The charge-limit slider is a real `range` input that updates its green fill, and every control has hover/focus.
-
-### Stripe — landing page
-
-![Stripe landing page: original screenshot vs HTML replica](examples/landing-stripe/comparison.webp)
-
-[Source](examples/landing-stripe/input.png) · [HTML replica](examples/landing-stripe/output.html) — the diagonal gradient and multiply-blended headline are pure CSS; only the floating checkout + dashboard cluster is cropped from the source. The nav, announcement pill, and a working email field + Start-now button are all real controls with hover/focus.
-
-### Spotify — web player (dark)
-
-![Spotify web player: original screenshot vs HTML replica](examples/app-spotify/comparison.webp)
-
-[Source](examples/app-spotify/input.png) · [HTML replica](examples/app-spotify/output.html) — a dark three-pane player; every cover and album thumbnail is real imagery cropped from the source, and all icons are inline SVG. Fully interactive: rows highlight on hover with a play glyph, the transport (play / shuffle / repeat) toggles, the now-playing panel collapses, and volume is a real slider. _([Watch the live interaction demo](assets/spotify-demo.gif).)_
-
-### Airbnb — iOS app (mobile)
-
-![Airbnb iOS app: original screenshot vs HTML replica](examples/mobile-airbnb/comparison.webp)
-
-[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) — authored at 393px @3x and wrapped in a decorative iPhone frame; each card's lead photo and the 3D category icons are cropped from the source (extra carousel shots are royalty-free Unsplash interiors). Fully interactive: every listing card is a swipeable photo carousel (drag to flick through, velocity snap, dot indicators, hover arrows), the hearts toggle with a tactile pop, and the bottom tab bar / category tabs switch the screen inside the frame — all with zero dependencies. _([Watch the live interaction demo](assets/airbnb-demo.gif).)_
-
-### Linear — landing page
-
-![Linear landing page: original screenshot vs HTML replica](examples/landing-linear/comparison.webp)
-
-[Source](examples/landing-linear/input.png) · [HTML replica](examples/landing-linear/output.html) — the product-UI card is lifted from the source with [`crop.mjs`](scripts/crop.mjs); everything else is hand-built HTML/CSS. Nav links and the Sign-up button have hover/focus states, and in-page links smooth-scroll.
-
-### Stripe — dashboard
-
-![Stripe dashboard: original screenshot vs HTML replica](examples/dashboard-stripe/comparison.webp)
-
-[Source](examples/dashboard-stripe/input.png) · [HTML replica](examples/dashboard-stripe/output.html) — the charts are inline SVG and the stacked bar is CSS; the entire screen is rebuilt as code with zero image crops. Interactive: the sidebar nav, the Test-mode switch, and the date/period pills all respond, and cards/rows highlight on hover.
 
 ## How it works
 
@@ -152,9 +204,10 @@ Point the agent at this repo and tell it to use the skill, starting from [`SKILL
 https://github.com/sevzq/screenshot-to-html
 ```
 
-### Manual
+<details>
+<summary><b>Manual install</b> (clone into your agent's skills directory)</summary>
 
-Clone the repo straight into your agent's skills directory (the repo root *is* the skill):
+The repo root *is* the skill:
 
 | Agent        | Skills directory             |
 | ------------ | ---------------------------- |
@@ -168,6 +221,8 @@ git clone https://github.com/sevzq/screenshot-to-html.git ~/.cursor/skills/scree
 ```
 
 The render/crop scripts need Node deps once (from the repo root): `npm i` installs `playwright-core`; add `sharp` for cropping with `npm i -D sharp`.
+
+</details>
 
 ## Usage
 
