@@ -41,120 +41,83 @@ Works in **Cursor · Claude Code · Codex · Windsurf · Copilot** — and 40+ a
 
 ## Gallery
 
-Real app screenshot (left) vs the generated **single-file HTML replica** (right). Every replica below was produced by the skill, is a single file with inline CSS/JS (no framework, no build step), and passes `node scripts/shot.mjs --verify`. Full sources in [`examples/`](examples/).
+Every replica below was produced by the skill — one file with inline CSS/JS (no framework, no build step) that passes `node scripts/shot.mjs --verify`. The **featured** examples play the *actual generated page* being used; the rest are side-by-side — real screenshot on the left, HTML replica on the right. Full sources in [`examples/`](examples/).
 
 ### Featured — full app UIs, fully interactive
 
 **ElevenLabs — Voices library**
 
-[![ElevenLabs Voices library: original screenshot vs HTML replica](examples/app-elevenlabs/comparison.webp)](examples/app-elevenlabs/output.html)
+[![ElevenLabs Voices library — live interaction of the generated HTML replica](assets/elevenlabs-demo.gif)](examples/app-elevenlabs/output.html)
 
-A light Voices / Explore workspace: sidebar, Explore / My Voices tabs, filter chips, a 3×2 trending grid, a drag-snap "Handpicked" carousel, and the weekly spotlight. Voice avatars are layered CSS gradients and icons are inline SVG; only the card artworks are cropped.
-[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) · [▶ Live demo](assets/elevenlabs-demo.gif)
+A light Voices / Explore workspace: sidebar, Explore / My Voices tabs, filter chips, a 3×2 trending grid, a drag-snap "Handpicked" carousel, and the weekly spotlight. Voice avatars are layered CSS gradients and icons are inline SVG; only the card artworks are cropped — and it's all one self-contained HTML file.
+[Source](examples/app-elevenlabs/input.png) · [HTML replica](examples/app-elevenlabs/output.html) · [Side-by-side](examples/app-elevenlabs/comparison.webp)
 
 **Spotify — web player (dark)**
 
-[![Spotify web player: original screenshot vs HTML replica](examples/app-spotify/comparison.webp)](examples/app-spotify/output.html)
+[![Spotify web player — live interaction of the generated HTML replica](assets/spotify-demo.gif)](examples/app-spotify/output.html)
 
 A dark three-pane player; every cover is real imagery cropped from the source, all icons inline SVG. Rows reveal a play glyph on hover, the transport (play / shuffle / repeat) toggles, the now-playing panel collapses, and volume is a real slider.
-[Source](examples/app-spotify/input.png) · [HTML replica](examples/app-spotify/output.html) · [▶ Live demo](assets/spotify-demo.gif)
+[Source](examples/app-spotify/input.png) · [HTML replica](examples/app-spotify/output.html) · [Side-by-side](examples/app-spotify/comparison.webp)
 
 **Airbnb — iOS app (mobile)**
 
-[![Airbnb iOS app: original screenshot vs HTML replica](examples/mobile-airbnb/comparison.webp)](examples/mobile-airbnb/output.html)
+[![Airbnb iOS app — live interaction of the generated HTML replica](assets/airbnb-demo.gif)](examples/mobile-airbnb/output.html)
 
 Authored at 393px @3x in a decorative iPhone frame. Every listing card is a swipeable photo carousel (drag, velocity snap, dot indicators, hover arrows), the hearts toggle with a tactile pop, and the bottom tab bar switches screens — all with zero dependencies.
-[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) · [▶ Live demo](assets/airbnb-demo.gif)
+[Source](examples/mobile-airbnb/input.png) · [HTML replica](examples/mobile-airbnb/output.html) · [Side-by-side](examples/mobile-airbnb/comparison.webp)
 
 ### More examples
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
 **Cloudflare — landing page**
 
-[![Cloudflare landing page replica](examples/landing-cloudflare/comparison.webp)](examples/landing-cloudflare/output.html)
+[![Cloudflare landing page: original screenshot vs HTML replica](examples/landing-cloudflare/comparison.webp)](examples/landing-cloudflare/output.html)
 
-Giant black-and-orange headline and full nav in pure CSS; only the geodesic sphere is cropped from the source.
-[Source](examples/landing-cloudflare/input.png) · [HTML](examples/landing-cloudflare/output.html)
-
-</td>
-<td width="50%" valign="top">
+Giant black-and-orange headline and full nav in pure CSS; only the geodesic sphere is cropped from the source. Both CTAs and the "Under attack?" button are real controls with hover/focus.
+[Source](examples/landing-cloudflare/input.png) · [HTML replica](examples/landing-cloudflare/output.html)
 
 **Modal — landing page (dark / neon)**
 
-[![Modal landing page replica](examples/landing-modal/comparison.webp)](examples/landing-modal/output.html)
+[![Modal landing page: original screenshot vs HTML replica](examples/landing-modal/comparison.webp)](examples/landing-modal/output.html)
 
-A pure-black hero with a spring-green accent; the glowing cube is `screen`-blended onto the black so there's no seam.
-[Source](examples/landing-modal/input.png) · [HTML](examples/landing-modal/output.html)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+A pure-black hero with a spring-green accent; the glowing cube is `screen`-blended onto the black so there's no seam, and the customer logo strip is real imagery.
+[Source](examples/landing-modal/input.png) · [HTML replica](examples/landing-modal/output.html)
 
 **Clay — landing page (colorful)**
 
-[![Clay landing page replica](examples/landing-clay/comparison.webp)](examples/landing-clay/output.html)
+[![Clay landing page: original screenshot vs HTML replica](examples/landing-clay/comparison.webp)](examples/landing-clay/output.html)
 
-A cream hero on white with a huge display headline; four clay sculptures are `multiply`-blended across the panel edge.
-[Source](examples/landing-clay/input.png) · [HTML](examples/landing-clay/output.html)
-
-</td>
-<td width="50%" valign="top">
+A cream hero on white with a huge display headline; four clay sculptures are `multiply`-blended across the panel edge, and the 20-brand logo wall is real imagery.
+[Source](examples/landing-clay/input.png) · [HTML replica](examples/landing-clay/output.html)
 
 **Stripe — landing page**
 
-[![Stripe landing page replica](examples/landing-stripe/comparison.webp)](examples/landing-stripe/output.html)
+[![Stripe landing page: original screenshot vs HTML replica](examples/landing-stripe/comparison.webp)](examples/landing-stripe/output.html)
 
-The diagonal gradient and multiply-blended headline are pure CSS; only the checkout/dashboard cluster is cropped. Working email field.
-[Source](examples/landing-stripe/input.png) · [HTML](examples/landing-stripe/output.html)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+The diagonal gradient and multiply-blended headline are pure CSS; only the floating checkout/dashboard cluster is cropped. The nav, announcement pill, and a working email field + Start-now button are all real controls.
+[Source](examples/landing-stripe/input.png) · [HTML replica](examples/landing-stripe/output.html)
 
 **Tesla — charging screen (iOS)**
 
-[![Tesla charging screen replica](examples/mobile-tesla/comparison.webp)](examples/mobile-tesla/output.html)
+[![Tesla charging screen: original screenshot vs HTML replica](examples/mobile-tesla/comparison.webp)](examples/mobile-tesla/output.html)
 
-393px @3x in an iPhone frame; the Model 3 render is color-matched to the screen. The charge-limit slider is a real `range` input.
-[Source](examples/mobile-tesla/input.png) · [HTML](examples/mobile-tesla/output.html)
-
-</td>
-<td width="50%" valign="top">
+Authored at 393px @3x in a decorative iPhone frame; the Model 3 render is color-matched to the screen so it's seamless. The charge-limit slider is a real `range` input that updates its green fill.
+[Source](examples/mobile-tesla/input.png) · [HTML replica](examples/mobile-tesla/output.html)
 
 **Stripe — dashboard**
 
-[![Stripe dashboard replica](examples/dashboard-stripe/comparison.webp)](examples/dashboard-stripe/output.html)
+[![Stripe dashboard: original screenshot vs HTML replica](examples/dashboard-stripe/comparison.webp)](examples/dashboard-stripe/output.html)
 
-Rebuilt entirely as code (inline-SVG charts, CSS bars), zero crops. The sidebar nav, Test-mode switch, and date pills all respond.
-[Source](examples/dashboard-stripe/input.png) · [HTML](examples/dashboard-stripe/output.html)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+Rebuilt entirely as code (inline-SVG charts, CSS bars), zero image crops. The sidebar nav, Test-mode switch, and date/period pills all respond, and rows highlight on hover.
+[Source](examples/dashboard-stripe/input.png) · [HTML replica](examples/dashboard-stripe/output.html)
 
 **Linear — landing page**
 
-[![Linear landing page replica](examples/landing-linear/comparison.webp)](examples/landing-linear/output.html)
+[![Linear landing page: original screenshot vs HTML replica](examples/landing-linear/comparison.webp)](examples/landing-linear/output.html)
 
-Hand-built HTML/CSS; only the product-UI card is lifted from the source. Nav + Sign-up have hover/focus and links smooth-scroll.
-[Source](examples/landing-linear/input.png) · [HTML](examples/landing-linear/output.html)
+Hand-built HTML/CSS; only the product-UI card is lifted from the source. Nav + Sign-up have hover/focus and in-page links smooth-scroll.
+[Source](examples/landing-linear/input.png) · [HTML replica](examples/landing-linear/output.html)
 
-</td>
-<td width="50%" valign="top">
-
-**More in [`examples/`](examples/)**
-
-Each folder ships the source screenshot, the single-file `output.html`, and a side-by-side `comparison.webp`. New replicas welcome via PR.
-
-</td>
-</tr>
-</table>
+More replicas — each with its source screenshot, single-file `output.html`, and a side-by-side `comparison.webp` — live in [`examples/`](examples/). New ones welcome via PR.
 
 > Like what you see? **[⭐ Star the repo](https://github.com/sevzq/screenshot-to-html)** — it helps others find it.
 

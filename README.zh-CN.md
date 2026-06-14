@@ -41,120 +41,83 @@ npx skills add sevzq/screenshot-to-html
 
 ## 案例展示
 
-左边是真实 App 截图，右边是技能生成的**单文件 HTML 复刻**。下面每个复刻都由技能产出，是带内联 CSS/JS 的单一文件（无框架、无构建），并通过 `node scripts/shot.mjs --verify`。完整源文件见 [`examples/`](examples/)。
+下面每个复刻都由技能产出，是带内联 CSS/JS 的单一文件（无框架、无构建），并通过 `node scripts/shot.mjs --verify`。**精选**案例直接播放*生成页面*的真实交互；其余为并排对比 —— 左边真实截图，右边 HTML 复刻。完整源文件见 [`examples/`](examples/)。
 
 ### 精选 —— 完整应用界面，完全可交互
 
 **ElevenLabs —— 语音库**
 
-[![ElevenLabs 语音库：原始截图 vs HTML 复刻](examples/app-elevenlabs/comparison.webp)](examples/app-elevenlabs/output.html)
+[![ElevenLabs 语音库 —— 生成的 HTML 复刻的真实交互演示](assets/elevenlabs-demo.gif)](examples/app-elevenlabs/output.html)
 
-浅色 Voices / Explore 工作区：侧边栏、Explore / My Voices 标签、筛选标签、3×2 Trending 网格、带速度吸附的「Handpicked」拖拽轮播，以及每周精选。语音头像是分层 CSS 渐变、图标是内联 SVG，仅卡片插画从原图裁切。
-[原图](examples/app-elevenlabs/input.png) · [HTML 复刻](examples/app-elevenlabs/output.html) · [▶ 实时演示](assets/elevenlabs-demo.gif)
+浅色 Voices / Explore 工作区：侧边栏、Explore / My Voices 标签、筛选标签、3×2 Trending 网格、带速度吸附的「Handpicked」拖拽轮播，以及每周精选。语音头像是分层 CSS 渐变、图标是内联 SVG，仅卡片插画从原图裁切 —— 而且整页就是一个自包含 HTML 文件。
+[原图](examples/app-elevenlabs/input.png) · [HTML 复刻](examples/app-elevenlabs/output.html) · [并排对比](examples/app-elevenlabs/comparison.webp)
 
 **Spotify —— 网页播放器（暗色）**
 
-[![Spotify 网页播放器：原始截图 vs HTML 复刻](examples/app-spotify/comparison.webp)](examples/app-spotify/output.html)
+[![Spotify 网页播放器 —— 生成的 HTML 复刻的真实交互演示](assets/spotify-demo.gif)](examples/app-spotify/output.html)
 
 暗色三栏播放器；封面是从原图裁出的真实图像，图标全内联 SVG。歌曲行悬停出现播放图标，播放控制（播放 / 随机 / 循环）可切换，正在播放面板可收起，音量是真实滑块。
-[原图](examples/app-spotify/input.png) · [HTML 复刻](examples/app-spotify/output.html) · [▶ 实时演示](assets/spotify-demo.gif)
+[原图](examples/app-spotify/input.png) · [HTML 复刻](examples/app-spotify/output.html) · [并排对比](examples/app-spotify/comparison.webp)
 
 **Airbnb —— iOS App（移动端）**
 
-[![Airbnb iOS App：原始截图 vs HTML 复刻](examples/mobile-airbnb/comparison.webp)](examples/mobile-airbnb/output.html)
+[![Airbnb iOS App —— 生成的 HTML 复刻的真实交互演示](assets/airbnb-demo.gif)](examples/mobile-airbnb/output.html)
 
 按 393px @3x 编写并包进装饰性 iPhone 外框。每个房源卡片都是可滑动图片轮播（拖拽、速度吸附、圆点指示、悬停箭头），爱心带触感弹跳，底部 tab 栏切换屏幕 —— 全部零依赖。
-[原图](examples/mobile-airbnb/input.png) · [HTML 复刻](examples/mobile-airbnb/output.html) · [▶ 实时演示](assets/airbnb-demo.gif)
+[原图](examples/mobile-airbnb/input.png) · [HTML 复刻](examples/mobile-airbnb/output.html) · [并排对比](examples/mobile-airbnb/comparison.webp)
 
 ### 更多案例
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
 **Cloudflare —— 落地页**
 
-[![Cloudflare 落地页复刻](examples/landing-cloudflare/comparison.webp)](examples/landing-cloudflare/output.html)
+[![Cloudflare 落地页：原始截图 vs HTML 复刻](examples/landing-cloudflare/comparison.webp)](examples/landing-cloudflare/output.html)
 
-黑橙巨字标题 + 完整导航全是纯 CSS；只有那颗测地球体从原图裁切并溢出右边缘。
-[原图](examples/landing-cloudflare/input.png) · [HTML](examples/landing-cloudflare/output.html)
-
-</td>
-<td width="50%" valign="top">
+黑橙巨字标题 + 完整导航全是纯 CSS；只有那颗测地球体从原图裁切并溢出右边缘。两个 CTA 和「Under attack?」按钮都是带 hover/focus 的真实控件。
+[原图](examples/landing-cloudflare/input.png) · [HTML 复刻](examples/landing-cloudflare/output.html)
 
 **Modal —— 落地页（暗色 / 霓虹）**
 
-[![Modal 落地页复刻](examples/landing-modal/comparison.webp)](examples/landing-modal/output.html)
+[![Modal 落地页：原始截图 vs HTML 复刻](examples/landing-modal/comparison.webp)](examples/landing-modal/output.html)
 
-纯黑 Hero 配春绿点缀；发光方块用 `screen` 混合叠到黑底上，毫无接缝。
-[原图](examples/landing-modal/input.png) · [HTML](examples/landing-modal/output.html)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+纯黑 Hero 配春绿点缀；发光方块用 `screen` 混合叠到黑底上，毫无接缝，客户 logo 行是真实图像。
+[原图](examples/landing-modal/input.png) · [HTML 复刻](examples/landing-modal/output.html)
 
 **Clay —— 落地页（彩色）**
 
-[![Clay 落地页复刻](examples/landing-clay/comparison.webp)](examples/landing-clay/output.html)
+[![Clay 落地页：原始截图 vs HTML 复刻](examples/landing-clay/comparison.webp)](examples/landing-clay/output.html)
 
-白底奶油色 Hero 配超大标题；四组黏土雕塑用 `multiply` 混合干净地骑在面板边缘上。
-[原图](examples/landing-clay/input.png) · [HTML](examples/landing-clay/output.html)
-
-</td>
-<td width="50%" valign="top">
+白底奶油色 Hero 配超大标题；四组黏土雕塑用 `multiply` 混合干净地骑在面板边缘上，20 个品牌的 logo 墙是真实图像。
+[原图](examples/landing-clay/input.png) · [HTML 复刻](examples/landing-clay/output.html)
 
 **Stripe —— 落地页**
 
-[![Stripe 落地页复刻](examples/landing-stripe/comparison.webp)](examples/landing-stripe/output.html)
+[![Stripe 落地页：原始截图 vs HTML 复刻](examples/landing-stripe/comparison.webp)](examples/landing-stripe/output.html)
 
-斜向渐变 + 正片叠底标题是纯 CSS；只有收银/仪表盘卡片簇裁切。邮箱输入框可用。
-[原图](examples/landing-stripe/input.png) · [HTML](examples/landing-stripe/output.html)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+斜向渐变 + 正片叠底标题是纯 CSS；只有浮动的收银/仪表盘卡片簇裁切。导航、公告 pill、可用的邮箱框 + Start now 按钮都是真实控件。
+[原图](examples/landing-stripe/input.png) · [HTML 复刻](examples/landing-stripe/output.html)
 
 **Tesla —— 充电屏（iOS）**
 
-[![Tesla 充电屏复刻](examples/mobile-tesla/comparison.webp)](examples/mobile-tesla/output.html)
+[![Tesla 充电屏：原始截图 vs HTML 复刻](examples/mobile-tesla/comparison.webp)](examples/mobile-tesla/output.html)
 
-393px @3x iPhone 外框；Model 3 渲染图与屏幕底色精确匹配。充电上限滑块是真实 `range`。
-[原图](examples/mobile-tesla/input.png) · [HTML](examples/mobile-tesla/output.html)
-
-</td>
-<td width="50%" valign="top">
+按 393px @3x 编写并包进装饰性 iPhone 外框；Model 3 渲染图与屏幕底色精确匹配，无缝衔接。充电上限滑块是真实 `range` 并实时更新绿色进度。
+[原图](examples/mobile-tesla/input.png) · [HTML 复刻](examples/mobile-tesla/output.html)
 
 **Stripe —— 仪表盘**
 
-[![Stripe 仪表盘复刻](examples/dashboard-stripe/comparison.webp)](examples/dashboard-stripe/output.html)
+[![Stripe 仪表盘：原始截图 vs HTML 复刻](examples/dashboard-stripe/comparison.webp)](examples/dashboard-stripe/output.html)
 
-整屏纯代码重建（内联 SVG 图表、CSS 条），零裁切。侧边导航、Test mode 开关、日期 pill 都有反馈。
-[原图](examples/dashboard-stripe/input.png) · [HTML](examples/dashboard-stripe/output.html)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+整屏纯代码重建（内联 SVG 图表、CSS 条），零图片裁切。侧边导航、Test mode 开关、日期/周期 pill 都有反馈，行悬停高亮。
+[原图](examples/dashboard-stripe/input.png) · [HTML 复刻](examples/dashboard-stripe/output.html)
 
 **Linear —— 落地页**
 
-[![Linear 落地页复刻](examples/landing-linear/comparison.webp)](examples/landing-linear/output.html)
+[![Linear 落地页：原始截图 vs HTML 复刻](examples/landing-linear/comparison.webp)](examples/landing-linear/output.html)
 
 手写 HTML/CSS；仅产品 UI 卡片从原图取出。导航 + 注册有 hover/focus，页内链接平滑滚动。
-[原图](examples/landing-linear/input.png) · [HTML](examples/landing-linear/output.html)
+[原图](examples/landing-linear/input.png) · [HTML 复刻](examples/landing-linear/output.html)
 
-</td>
-<td width="50%" valign="top">
-
-**更多见 [`examples/`](examples/)**
-
-每个目录都含原始截图、单文件 `output.html` 和并排 `comparison.webp`。欢迎 PR 新案例。
-
-</td>
-</tr>
-</table>
+更多复刻 —— 含原始截图、单文件 `output.html` 和并排 `comparison.webp` —— 都在 [`examples/`](examples/)。欢迎 PR 新案例。
 
 > 喜欢的话，**[⭐ 给个 Star](https://github.com/sevzq/screenshot-to-html)** —— 能帮更多人发现它。
 
