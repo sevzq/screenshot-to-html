@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spotify — Today's Top Hits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000;
+    --panel: #121212;
+    --card: #1f1f1f;
+    --hover: #1a1a1a;
+    --elevated: #242424;
+    --elevated-hi: #2a2a2a;
+    --text: #fff;
+    --muted: #b3b3b3;
+    --faint: #a7a7a7;
+    --green: #1ed760;
+    --line: rgba(255,255,255,.10);
+    --radius: 8px;
+    --topbar-h: 64px;
+    --playbar-h: 72px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    overflow: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  img { display: block; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  .ic { width: 1em; height: 1em; display: inline-block; vertical-align: -0.14em; flex: 0 0 auto; }
+
+  .app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* Generic round icon buttons */
+  .ico {
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--muted); background: none; border: 0;
+    transition: color .15s, transform .15s, background .15s;
+  }
+  .ico:hover { color: var(--text); }
+
+  /* hide internal scrollbars (Spotify reveals on hover; render keeps it clean) */
+  .scroll { overflow-y: auto; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; height: 0; }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    flex: 0 0 var(--topbar-h); height: var(--topbar-h);
+    background: var(--black);
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 0 14px; gap: 8px;
+  }
+  .tb-left { display: flex; align-items: center; }
+  .logo { color: var(--green); font-size: 32px; line-height: 1; }
+  .tb-center { display: flex; align-items: center; gap: 8px; justify-content: center; }
+  .home-btn {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--elevated); color: var(--text);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 22px; flex: 0 0 auto;
+  }
+  .home-btn:hover { background: var(--elevated-hi); transform: scale(1.04); }
+  .search {
+    display: flex; align-items: center; gap: 10px;
+    width: 480px; max-width: 50vw; height: 48px;
+    background: var(--elevated); border-radius: 999px;
+    padding: 0 8px 0 16px; border: 1px solid transparent;
+  }
+  .search:hover { background: var(--elevated-hi); border-color: rgba(255,255,255,.18); }
+  .search .mag { color: var(--text); font-size: 20px; }
+  .search input {
+    flex: 1; border: 0; background: none; outline: none;
+    color: var(--text); font-size: 14px; font-weight: 500;
+  }
+  .search input::placeholder { color: #c8c8c8; }
+  .search .divider { width: 1px; height: 24px; background: rgba(255,255,255,.25); }
+  .browse-btn { color: var(--muted); display: inline-flex; padding: 6px; }
+  .browse-btn:hover { color: var(--text); }
+  .tb-right { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
+  .install { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; font-weight: 700; }
+  .install:hover { color: var(--text); transform: scale(1.03); }
+  .install i { font-size: 16px; }
+  .bell { font-size: 18px; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green); color: #000;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+
+  /* ============ BODY (3 columns) ============ */
+  .app-body {
+    flex: 1 1 auto; min-height: 0;
+    display: grid; grid-template-columns: 284px minmax(0,1fr) 294px;
+    gap: 8px; padding: 0 8px 8px;
+  }
+  .panel { background: var(--panel); border-radius: var(--radius); min-height: 0; }
+
+  /* ---- LEFT: Your Library ---- */
+  .lib { display: flex; flex-direction: column; padding: 8px 0; }
+  .lib-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 4px 16px 12px; color: var(--muted);
+  }
+  .lib-head .lib-ico { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--muted); }
+  .lib-head .lib-ico:hover { color: var(--text); }
+  .lib-head .lib-ico span { font-size: 15px; }
+  .lib-head .spacer { flex: 1; }
+  .lib-head .ico { font-size: 15px; }
+  .lib-cards { display: flex; flex-direction: column; gap: 8px; padding: 0 8px; }
+  .lib-card { background: var(--card); border-radius: var(--radius); padding: 16px 16px 18px; }
+  .lib-card h3 { margin: 0 0 4px; font-size: 14px; font-weight: 700; }
+  .lib-card p { margin: 0 0 16px; font-size: 12.5px; color: #e8e8e8; }
+  .pill {
+    display: inline-flex; align-items: center; background: var(--text); color: #000;
+    font-size: 13px; font-weight: 700; border-radius: 999px; padding: 8px 16px;
+  }
+  .pill:hover { transform: scale(1.04); background: #f0f0f0; }
+
+  /* ---- CENTER: Playlist ---- */
+  .center { display: flex; flex-direction: column; overflow: hidden; }
+  .center-scroll { display: flex; flex-direction: column; }
+
+  .ch-head { position: relative; min-height: 300px; display: flex; align-items: flex-end; padding: 24px 24px 20px; overflow: hidden; background: #181818; }
+  .ch-bg { position: absolute; top: 0; left: 0; width: 100%; height: auto; }
+  .ch-grad {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.28) 0%, rgba(0,0,0,.06) 30%, rgba(0,0,0,0) 55%),
+      linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.18) 52%, rgba(20,20,20,.82) 76%, #121212 95%);
+  }
+  .ch-meta { position: relative; z-index: 1; width: 100%; }
+  .ch-type { font-size: 13px; font-weight: 700; }
+  .ch-title {
+    margin: 6px 0 0; font-weight: 900; letter-spacing: -0.045em; line-height: .92;
+    font-size: clamp(40px, 6.1vw, 86px); color: #fff;
+    text-shadow: 0 2px 24px rgba(0,0,0,.30);
+  }
+  .ch-sub { margin: 18px 0 0; font-size: 14px; color: #efefef; }
+  .ch-info { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .ch-info .sp-dot { color: var(--green); font-size: 17px; line-height: 0; }
+  .ch-info b { color: #fff; font-weight: 700; }
+  .ch-info .sep { opacity: .8; }
+
+  .center-body { padding: 8px 16px 16px; }
+  .controls { display: flex; align-items: center; gap: 22px; padding: 12px 8px; }
+  .play-lg {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: #000;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 22px; flex: 0 0 auto;
+  }
+  .play-lg:hover { transform: scale(1.05); background: #1fdf64; }
+  .controls .add {
+    width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--muted); color: var(--muted);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 13px;
+  }
+  .controls .add:hover { color: var(--text); border-color: var(--text); transform: scale(1.05); }
+  .controls .more { font-size: 22px; }
+  .controls .spacer { flex: 1; }
+  .controls .list-toggle { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 500; }
+  .controls .list-toggle:hover { color: var(--text); }
+  .controls .list-toggle i { font-size: 16px; }
+
+  /* Track table */
+  .tracks { width: 100%; }
+  .trk {
+    display: grid;
+    grid-template-columns: 28px minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.35fr) 46px;
+    align-items: center; gap: 12px;
+    padding: 7px 16px; border-radius: 4px;
+  }
+  .trk-head {
+    color: var(--muted); font-size: 12px; font-weight: 500;
+    border-bottom: 1px solid var(--line); border-radius: 0;
+    padding-bottom: 8px; margin-bottom: 8px; padding-top: 0;
+  }
+  .trk-head .idx { text-align: center; }
+  .trk-head .dur { text-align: right; }
+  .trk-row { color: var(--muted); }
+  .trk-row:hover { background: var(--hover); }
+  .trk .idx { position: relative; text-align: center; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .trk .cell-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .trk .thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; flex: 0 0 auto; }
+  .trk .tt { min-width: 0; }
+  .trk .tt .name { font-size: 14px; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trk .tt .name.is-green { color: var(--green); }
+  .trk .tt .artist { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+  .trk .album, .trk .date { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trk .dur { font-size: 13px; color: var(--muted); text-align: right; }
+  .exp { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; border-radius: 3px; background: #7a7a7a; color: #121212; font-size: 10px; font-weight: 700; flex: 0 0 auto; }
+
+  /* equalizer (currently playing) */
+  .eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; width: 17px; justify-content: center; }
+  .eq i { width: 2.5px; background: var(--green); border-radius: 1px; }
+  .eq i:nth-child(1){ height: 40%; } .eq i:nth-child(2){ height: 95%; }
+  .eq i:nth-child(3){ height: 60%; } .eq i:nth-child(4){ height: 80%; }
+
+  /* ---- RIGHT: Now playing ---- */
+  .np { display: flex; flex-direction: column; padding: 8px 12px 14px; }
+  .np-head { display: flex; align-items: center; gap: 8px; padding: 8px 4px 14px; }
+  .np-head h2 { margin: 0; font-size: 15px; font-weight: 700; }
+  .np-head .spacer { flex: 1; }
+  .np-head .ico { font-size: 16px; }
+  .np-cover { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--radius); }
+  .np-title-row { display: flex; align-items: center; margin-top: 16px; gap: 10px; }
+  .np-title-row .t { flex: 1; min-width: 0; }
+  .np-title-row .t .song { font-size: 22px; font-weight: 700; color: #fff; }
+  .np-title-row .t .by { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .np-title-row .ico { font-size: 17px; }
+  .np-title-row .add-circle {
+    width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--muted); color: var(--muted);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 12px; flex: 0 0 auto;
+  }
+  .np-title-row .add-circle:hover { color: #fff; border-color: #fff; transform: scale(1.05); }
+
+  .artist-card { margin-top: 22px; background: #1a1a1a; border-radius: var(--radius); overflow: hidden; }
+  .artist-img { position: relative; height: 168px; }
+  .artist-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+  .artist-img .cap { position: absolute; left: 16px; top: 14px; font-size: 16px; font-weight: 700; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+  .artist-body { padding: 14px 16px 16px; }
+  .artist-body .name { font-size: 16px; font-weight: 700; }
+  .artist-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+  .artist-row .listeners { font-size: 13px; color: var(--muted); }
+  .follow { border: 1px solid #727272; color: #fff; border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 700; }
+  .follow:hover { border-color: #fff; transform: scale(1.04); }
+  .artist-bio { margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  /* ============ PLAYBACK BAR ============ */
+  .playbar {
+    flex: 0 0 var(--playbar-h); height: var(--playbar-h);
+    background: var(--black);
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 16px;
+  }
+  .pb-left { flex: 1 1 0; display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .pb-left .thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; flex: 0 0 auto; }
+  .pb-left .meta { min-width: 0; }
+  .pb-left .meta .song { font-size: 14px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pb-left .meta .by { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pb-left .add { width: 32px; height: 32px; border: 1.5px solid var(--muted); border-radius: 50%; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; flex: 0 0 auto; }
+  .pb-left .add:hover { color: #fff; border-color: #fff; }
+
+  .pb-center { flex: 0 1 560px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .pb-buttons { display: flex; align-items: center; gap: 22px; }
+  .pb-buttons .ico { font-size: 16px; }
+  .pb-buttons .ico.sm { font-size: 15px; }
+  .play-wt {
+    width: 32px; height: 32px; border-radius: 50%; background: #fff; color: #000;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 13px; flex: 0 0 auto;
+  }
+  .play-wt:hover { transform: scale(1.06); }
+  .pb-progress { display: flex; align-items: center; gap: 9px; width: 100%; max-width: 540px; }
+  .pb-progress .time { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 34px; }
+  .pb-progress .time.r { text-align: left; }
+  .bar { flex: 1; height: 4px; background: #4d4d4d; border-radius: 2px; position: relative; }
+  .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: #fff; }
+  .bar .knob { position: absolute; top: 50%; transform: translate(-50%,-50%); width: 12px; height: 12px; border-radius: 50%; background: #fff; opacity: 0; }
+  .bar:hover .fill { background: var(--green); }
+  .bar:hover .knob { opacity: 1; }
+
+  .pb-right { flex: 1 1 0; display: flex; align-items: center; justify-content: flex-end; gap: 14px; }
+  .pb-right .ico { font-size: 15px; }
+  .pb-right .ico.active { color: var(--green); }
+  .vol { display: flex; align-items: center; gap: 6px; }
+  .vol .bar { width: 92px; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 1100px) {
+    .app-body { grid-template-columns: 284px minmax(0,1fr); }
+    .col-right { display: none; }
+  }
+  @media (max-width: 760px) {
+    .app-body { grid-template-columns: 1fr; }
+    .col-left { display: none; }
+    .topbar { grid-template-columns: auto minmax(0,1fr) auto; }
+    .tb-right .install, .tb-center .home-btn { display: none; }
+    .search { width: 100%; max-width: none; }
+    .pb-left .meta { display: none; }
+    .pb-right { display: none; }
+    .pb-center { flex: 1 1 auto; }
+    .pb-buttons { gap: 16px; }
+  }
+
+  /* ============ Phase 4 — Interactivity & states ============ */
+  /* Shared motion + keyboard focus. These add feedback only; the resting look is unchanged. */
+  a, button, input, [role="button"], [tabindex] {
+    transition: background-color .14s ease, color .14s ease, border-color .14s ease,
+                transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+  }
+  :where(a[href], button, input, [role="button"], [tabindex="0"]):focus-visible {
+    outline: 2px solid #fff; outline-offset: 2px;
+  }
+
+  /* Interactive track rows: pointer, press, and the Spotify play glyph over the index on hover/focus */
+  .trk-row { cursor: pointer; }
+  .trk-row:active { background: var(--elevated); }
+  .idx-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 13px; height: 13px; color: #fff; opacity: 0; pointer-events: none;
+  }
+  .trk-row:hover .idx-num, .trk-row:hover .eq,
+  .trk-row:focus-visible .idx-num, .trk-row:focus-visible .eq { opacity: 0; }
+  .trk-row:hover .idx-play, .trk-row:focus-visible .idx-play { opacity: 1; }
+
+  /* Active (green) state for shuffle / repeat */
+  .pb-buttons .ico.active { color: var(--green); }
+
+  /* Volume: a real <input type=range> styled to match the resting bar (white fill, hidden knob) */
+  .vol-range {
+    -webkit-appearance: none; appearance: none;
+    width: 92px; height: 4px; border-radius: 2px; cursor: pointer; outline: none;
+    background: linear-gradient(to right, #fff var(--p, 72%), #4d4d4d var(--p, 72%));
+  }
+  .vol-range::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: transparent; }
+  .vol-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; margin-top: -4px;
+    width: 12px; height: 12px; border-radius: 50%; background: #fff; opacity: 0;
+  }
+  .vol-range::-moz-range-track { height: 4px; border-radius: 2px; background: transparent; }
+  .vol-range::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: #fff; opacity: 0; }
+  .vol-range:hover { background: linear-gradient(to right, var(--green) var(--p, 72%), #4d4d4d var(--p, 72%)); }
+  .vol-range:hover::-webkit-slider-thumb { opacity: 1; }
+  .vol-range:hover::-moz-range-thumb { opacity: 1; }
+
+  /* Collapse the Now-playing panel when its × is clicked */
+  body.np-closed .col-right { display: none; }
+  body.np-closed .app-body { grid-template-columns: 284px minmax(0, 1fr); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: .001ms !important; animation-duration: .001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<!-- Inline icon sprite (self-contained, no CDN) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="ic-spotify" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.21c3.81-.87 7.08-.5 9.72 1.11a.62.62 0 0 1 .21.85zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.13-9.97-1.17a.78.78 0 1 1-.45-1.49c3.63-1.1 8.15-.57 11.24 1.33a.78.78 0 0 1 .25 1.07zm.11-2.84C14.69 9.16 9.37 8.97 6.3 9.9a.94.94 0 1 1-.55-1.8c3.53-1.07 9.4-.86 13.11 1.34a.94.94 0 0 1-.95 1.62z"/></symbol>
+  <symbol id="ic-home" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3.1 3 10.5V21h6v-6h6v6h6V10.5L12 3.1z"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm10 17-5.2-5.2"/></symbol>
+  <symbol id="ic-install" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></symbol>
+  <symbol id="ic-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="ic-arrow-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="ic-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h3v14H7zM14 5h3v14h-3z"/></symbol>
+  <symbol id="ic-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5.5v13a1 1 0 0 0 1.52.86l10.5-6.5a1 1 0 0 0 0-1.72L8.52 4.64A1 1 0 0 0 7 5.5z"/></symbol>
+  <symbol id="ic-ellipsis" viewBox="0 0 24 24"><path fill="currentColor" d="M5 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 4v5l3.5 2"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="ic-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></symbol>
+  <symbol id="ic-shuffle" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 4h4v4M4 20 20 4M20 16v4h-4M15 15l5 5M4 4l5 5"/></symbol>
+  <symbol id="ic-prev" viewBox="0 0 24 24"><path fill="currentColor" d="M6 5a1 1 0 0 1 1 1v4.7l9.5-5.5A1 1 0 0 1 18 6v12a1 1 0 0 1-1.5.87L7 13.3V18a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1z"/></symbol>
+  <symbol id="ic-next" viewBox="0 0 24 24"><path fill="currentColor" d="M18 5a1 1 0 0 0-1 1v4.7L7.5 5.13A1 1 0 0 0 6 6v12a1 1 0 0 0 1.5.87L17 13.3V18a1 1 0 0 0 2 0V6a1 1 0 0 0-1-1z"/></symbol>
+  <symbol id="ic-repeat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="ic-npview" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 4h16v16H4z"/><path fill="currentColor" d="M4 14h16v6H4z"/></symbol>
+  <symbol id="ic-mic" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="ic-queue" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M3 6h18M3 12h12M3 18h16"/></symbol>
+  <symbol id="ic-devices" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 5h18v11H3zM8 20h8"/></symbol>
+  <symbol id="ic-volume" viewBox="0 0 24 24"><path fill="currentColor" d="M11 5 6 9H2v6h4l5 4z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M15.5 8.5a5 5 0 0 1 0 7"/></symbol>
+  <symbol id="ic-expand" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7"/></symbol>
+</defs></svg>
+<div class="app">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="tb-left">
+      <a href="#" class="logo" aria-label="Spotify"><svg class="ic"><use href="#ic-spotify"/></svg></a>
+    </div>
+    <div class="tb-center">
+      <a href="#" class="home-btn" aria-label="Home"><svg class="ic"><use href="#ic-home"/></svg></a>
+      <div class="search">
+        <svg class="ic mag"><use href="#ic-search"/></svg>
+        <input type="text" placeholder="What do you want to play?" aria-label="Search">
+        <span class="divider"></span>
+        <button class="browse-btn" aria-label="Browse">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7">
+            <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="2.4"/>
+            <line x1="15" y1="3.2" x2="15" y2="20.8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="tb-right">
+      <a href="#" class="install"><svg class="ic"><use href="#ic-install"/></svg>Install App</a>
+      <button class="ico bell" aria-label="Notifications"><svg class="ic"><use href="#ic-bell"/></svg></button>
+      <a href="#" class="avatar">S</a>
+    </div>
+  </header>
+
+  <!-- ============ BODY ============ -->
+  <div class="app-body">
+
+    <!-- LEFT: Your Library -->
+    <aside class="panel lib col-left">
+      <div class="lib-head">
+        <a href="#" class="lib-ico">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+            <rect x="3" y="3" width="2.4" height="18" rx="1"/>
+            <rect x="8" y="3" width="2.4" height="18" rx="1"/>
+            <rect x="13.4" y="4.6" width="2.4" height="17" rx="1" transform="rotate(-19 14.6 13)"/>
+          </svg>
+          <span>Your Library</span>
+        </a>
+        <span class="spacer"></span>
+        <button class="ico" aria-label="Add"><svg class="ic"><use href="#ic-plus"/></svg></button>
+        <button class="ico" aria-label="Expand"><svg class="ic"><use href="#ic-arrow-right"/></svg></button>
+      </div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <h3>Create your first playlist</h3>
+          <p>It's easy, we'll help you</p>
+          <a href="#" class="pill">Create playlist</a>
+        </div>
+        <div class="lib-card">
+          <h3>Let's find some podcasts to follow</h3>
+          <p>We'll keep you updated on new episodes</p>
+          <a href="#" class="pill">Browse podcasts</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: Playlist -->
+    <main class="panel center col-center scroll">
+      <div class="center-scroll">
+        <header class="ch-head">
+          <img class="ch-bg" src="assets/cover-today.png" alt="Today's Top Hits cover — Lady Gaga and Bruno Mars">
+          <div class="ch-grad"></div>
+          <div class="ch-meta">
+            <span class="ch-type">Playlist</span>
+            <h1 class="ch-title">Today's Top&nbsp;Hits</h1>
+            <p class="ch-sub">The hottest 50. Cover: Lady Gaga &amp; Bruno Mars</p>
+            <div class="ch-info">
+              <svg class="ic sp-dot"><use href="#ic-spotify"/></svg>
+              <b>Spotify</b>
+              <span class="sep">•</span> 35,084,874 saves
+              <span class="sep">•</span> 50 songs, about 2 hr 30 min
+            </div>
+          </div>
+        </header>
+
+        <div class="center-body">
+          <div class="controls">
+            <button class="play-lg" id="playMain" type="button" aria-label="Pause" aria-pressed="true"><svg class="ic"><use href="#ic-pause"/></svg></button>
+            <button class="add" aria-label="Add to library"><svg class="ic"><use href="#ic-plus"/></svg></button>
+            <button class="ico more" aria-label="More"><svg class="ic"><use href="#ic-ellipsis"/></svg></button>
+            <span class="spacer"></span>
+            <button class="list-toggle">List <svg class="ic"><use href="#ic-list"/></svg></button>
+          </div>
+
+          <div class="tracks">
+            <div class="trk trk-head">
+              <div class="idx">#</div>
+              <div>Title</div>
+              <div>Album</div>
+              <div>Date added</div>
+              <div class="dur"><svg class="ic"><use href="#ic-clock"/></svg></div>
+            </div>
+
+            <div class="trk trk-row" role="button" tabindex="0" aria-label="Play Die With A Smile by Lady Gaga, Bruno Mars">
+              <div class="idx">
+                <span class="eq"><i></i><i></i><i></i><i></i></span>
+                <svg class="idx-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-play"/></svg>
+              </div>
+              <div class="cell-main">
+                <img class="thumb" src="assets/track-1.png" alt="">
+                <div class="tt">
+                  <div class="name is-green">Die With A Smile</div>
+                  <div class="artist">Lady Gaga, Bruno Mars</div>
+                </div>
+              </div>
+              <div class="album">Die With A Smile</div>
+              <div class="date">Aug 16, 2024</div>
+              <div class="dur">4:11</div>
+            </div>
+
+            <div class="trk trk-row" role="button" tabindex="0" aria-label="Play BIRDS OF A FEATHER by Billie Eilish">
+              <div class="idx">
+                <span class="idx-num">2</span>
+                <svg class="idx-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-play"/></svg>
+              </div>
+              <div class="cell-main">
+                <img class="thumb" src="assets/track-2.png" alt="">
+                <div class="tt">
+                  <div class="name">BIRDS OF A FEATHER</div>
+                  <div class="artist">Billie Eilish</div>
+                </div>
+              </div>
+              <div class="album">HIT ME HARD AND SO…</div>
+              <div class="date">May 31, 2024</div>
+              <div class="dur">3:30</div>
+            </div>
+
+            <div class="trk trk-row" role="button" tabindex="0" aria-label="Play That's So True by Gracie Abrams">
+              <div class="idx">
+                <span class="idx-num">3</span>
+                <svg class="idx-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-play"/></svg>
+              </div>
+              <div class="cell-main">
+                <img class="thumb" src="assets/track-3.png" alt="">
+                <div class="tt">
+                  <div class="name">That's So True</div>
+                  <div class="artist"><span class="exp">E</span> Gracie Abrams</div>
+                </div>
+              </div>
+              <div class="album">The Secret of Us (Delu…</div>
+              <div class="date">3 weeks ago</div>
+              <div class="dur">2:46</div>
+            </div>
+
+            <div class="trk trk-row" role="button" tabindex="0" aria-label="Play Taste by Sabrina Carpenter">
+              <div class="idx">
+                <span class="idx-num">4</span>
+                <svg class="idx-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-play"/></svg>
+              </div>
+              <div class="cell-main">
+                <img class="thumb" src="assets/track-4.png" alt="">
+                <div class="tt">
+                  <div class="name">Taste</div>
+                  <div class="artist">Sabrina Carpenter</div>
+                </div>
+              </div>
+              <div class="album">Short n' Sweet</div>
+              <div class="date">Aug 23, 2024</div>
+              <div class="dur">2:37</div>
+            </div>
+
+            <div class="trk trk-row" role="button" tabindex="0" aria-label="Play APT. by ROSÉ, Bruno Mars">
+              <div class="idx">
+                <span class="idx-num">5</span>
+                <svg class="idx-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-play"/></svg>
+              </div>
+              <div class="cell-main">
+                <img class="thumb" src="assets/track-5.png" alt="">
+                <div class="tt">
+                  <div class="name">APT.</div>
+                  <div class="artist">ROSÉ, Bruno Mars</div>
+                </div>
+              </div>
+              <div class="album">APT.</div>
+              <div class="date">Oct 18, 2024</div>
+              <div class="dur">2:49</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT: Now playing -->
+    <aside class="panel np col-right scroll">
+      <div class="np-head">
+        <h2>Today's Top Hits</h2>
+        <span class="spacer"></span>
+        <button class="ico" type="button" aria-label="More options for Today's Top Hits"><svg class="ic"><use href="#ic-ellipsis"/></svg></button>
+        <button class="ico" id="npClose" type="button" aria-label="Hide Now playing view"><svg class="ic"><use href="#ic-x"/></svg></button>
+      </div>
+      <img class="np-cover" src="assets/np-cover.png" alt="Die With A Smile">
+      <div class="np-title-row">
+        <div class="t">
+          <div class="song">Die With A Smile</div>
+          <div class="by">Lady Gaga, Bruno Mars</div>
+        </div>
+        <button class="ico" aria-label="Share"><svg class="ic"><use href="#ic-share"/></svg></button>
+        <button class="add-circle" aria-label="Add"><svg class="ic"><use href="#ic-plus"/></svg></button>
+      </div>
+
+      <section class="artist-card">
+        <div class="artist-img">
+          <img src="assets/artist-gaga.png" alt="Lady Gaga">
+          <span class="cap">About the artist</span>
+        </div>
+        <div class="artist-body">
+          <div class="name">Lady Gaga</div>
+          <div class="artist-row">
+            <span class="listeners">113,987,120 monthly listeners</span>
+            <button class="follow">Follow</button>
+          </div>
+          <p class="artist-bio">Academy Award and 17-time GRAMMY Award winner Lady Gaga is one of the best-selling music artists in history.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- ============ PLAYBACK BAR ============ -->
+  <footer class="playbar">
+    <div class="pb-left">
+      <img class="thumb" src="assets/track-1.png" alt="">
+      <div class="meta">
+        <div class="song">Die With A Smile</div>
+        <div class="by">Lady Gaga, Bruno Mars</div>
+      </div>
+      <button class="add" aria-label="Add"><svg class="ic"><use href="#ic-plus"/></svg></button>
+    </div>
+
+    <div class="pb-center">
+      <div class="pb-buttons">
+        <button class="ico sm" type="button" data-toggle aria-label="Enable shuffle" aria-pressed="false"><svg class="ic"><use href="#ic-shuffle"/></svg></button>
+        <button class="ico" type="button" aria-label="Previous"><svg class="ic"><use href="#ic-prev"/></svg></button>
+        <button class="play-wt" id="playMini" type="button" aria-label="Pause" aria-pressed="true"><svg class="ic"><use href="#ic-pause"/></svg></button>
+        <button class="ico" type="button" aria-label="Next"><svg class="ic"><use href="#ic-next"/></svg></button>
+        <button class="ico sm" type="button" data-toggle aria-label="Enable repeat" aria-pressed="false"><svg class="ic"><use href="#ic-repeat"/></svg></button>
+      </div>
+      <div class="pb-progress">
+        <span class="time">1:34</span>
+        <div class="bar"><div class="fill" style="width:37%"></div><div class="knob" style="left:37%"></div></div>
+        <span class="time r">4:11</span>
+      </div>
+    </div>
+
+    <div class="pb-right">
+      <button class="ico active" aria-label="Now playing view"><svg class="ic"><use href="#ic-npview"/></svg></button>
+      <button class="ico" aria-label="Lyrics"><svg class="ic"><use href="#ic-mic"/></svg></button>
+      <button class="ico" aria-label="Queue"><svg class="ic"><use href="#ic-queue"/></svg></button>
+      <button class="ico" aria-label="Connect to a device"><svg class="ic"><use href="#ic-devices"/></svg></button>
+      <div class="vol">
+        <button class="ico" type="button" aria-label="Mute"><svg class="ic"><use href="#ic-volume"/></svg></button>
+        <input id="vol" class="vol-range" type="range" min="0" max="100" value="72" aria-label="Volume" style="--p:72%">
+      </div>
+      <button class="ico" aria-label="Full screen"><svg class="ic"><use href="#ic-expand"/></svg></button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var setIcon = function (btn, sym) {
+    var u = btn && btn.querySelector('use');
+    if (u) u.setAttribute('href', '#' + sym);
+  };
+
+  // Play / pause — the big green button and the bottom transport stay in sync.
+  var playBtns = [document.getElementById('playMain'), document.getElementById('playMini')].filter(Boolean);
+  var playing = true; // resting state: the track is playing, so a pause glyph is shown
+  function renderPlay() {
+    playBtns.forEach(function (b) {
+      setIcon(b, playing ? 'ic-pause' : 'ic-play');
+      b.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      b.setAttribute('aria-pressed', String(playing));
+    });
+  }
+  playBtns.forEach(function (b) {
+    b.addEventListener('click', function () { playing = !playing; renderPlay(); });
+  });
+  renderPlay();
+
+  // Shuffle / repeat — toggle the green "active" state.
+  document.querySelectorAll('[data-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var on = btn.classList.toggle('active');
+      btn.setAttribute('aria-pressed', String(on));
+    });
+  });
+
+  // Track rows: keyboard activation (hover/play-glyph are handled in CSS).
+  document.querySelectorAll('.trk-row').forEach(function (row) {
+    row.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
+    });
+  });
+
+  // Hide the Now-playing panel from its × button.
+  var npClose = document.getElementById('npClose');
+  if (npClose) npClose.addEventListener('click', function () { document.body.classList.add('np-closed'); });
+
+  // Volume: keep the fill in sync with the range value.
+  var vol = document.getElementById('vol');
+  if (vol) {
+    var paint = function () { vol.style.setProperty('--p', vol.value + '%'); };
+    vol.addEventListener('input', paint);
+    paint();
+  }
+})();
+</script>
+</body>
+</html>

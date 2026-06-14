@@ -1,0 +1,23 @@
+{
+  "name": "screenshot-to-html",
+  "version": "0.1.0",
+  "description": "Replicate a UI screenshot into high-fidelity, self-contained, interactive HTML via a render -> compare -> refine loop.",
+  "skills": "./skills/",
+  "author": {
+    "name": "SevenZhang",
+    "url": "https://github.com/sevzq"
+  },
+  "homepage": "https://github.com/sevzq/screenshot-to-html",
+  "repository": "https://github.com/sevzq/screenshot-to-html",
+  "license": "MIT",
+  "keywords": [
+    "screenshot-to-html",
+    "screenshot-to-code",
+    "image-to-html",
+    "html",
+    "css",
+    "ui-clone",
+    "agent-skill",
+    "playwright"
+  ]
+}

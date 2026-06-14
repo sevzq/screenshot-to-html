@@ -1,0 +1,32 @@
+{
+  "name": "screenshot-to-html",
+  "version": "0.1.0",
+  "description": "AI coding-agent skill that replicates a UI screenshot into high-fidelity, self-contained HTML via a render -> compare -> refine loop.",
+  "keywords": [
+    "screenshot-to-html",
+    "screenshot-to-code",
+    "image-to-html",
+    "html",
+    "css",
+    "tailwind",
+    "ui-clone",
+    "agent-skill",
+    "playwright"
+  ],
+  "homepage": "https://github.com/sevzq/screenshot-to-html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sevzq/screenshot-to-html.git"
+  },
+  "author": "SevenZhang (https://github.com/sevzq)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "shot": "node skills/screenshot-to-html/scripts/shot.mjs",
+    "crop": "node skills/screenshot-to-html/scripts/crop.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.60.0",
+    "sharp": "^0.35.1"
+  }
+}

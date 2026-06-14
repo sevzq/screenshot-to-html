@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eff1f3;          /* page + canvas base */
+    --dot: #d7d9dd;         /* dotted grid */
+    --panel: #e6e8eb;       /* sidebar, prompt card, suggestion pills */
+    --inset: #dadce0;       /* search field, segmented tracks */
+    --white: #fcfdfe;       /* active tab / toggle, thumbnails */
+    --ink: #1f2024;         /* primary text */
+    --muted: #74767c;       /* dates, labels, placeholders, secondary icons */
+    --muted-2: #93959b;     /* fainter icons */
+    --headline: #2c2e30;    /* big welcome text — dark+thin reads as gray when scaled */
+    --line: rgba(20,22,28,.09);
+    --line-2: rgba(20,22,28,.06);
+    --black: #1c1c1e;       /* send button */
+    --shadow-sm: 0 1px 2px rgba(20,22,28,.06), 0 1px 1px rgba(20,22,28,.04);
+    --shadow-card: 0 1px 3px rgba(20,22,28,.05), 0 8px 24px rgba(20,22,28,.06);
+    --radius: 14px;
+    --font: "Google Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  svg { display: block; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- shell ---------- */
+  .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ---------- top nav ---------- */
+  .topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 54px; padding: 0 18px; flex: 0 0 auto;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .wordmark { font-size: 22px; font-weight: 600; letter-spacing: -.02em; color: #181a1d; }
+  .beta {
+    font-size: 10px; font-weight: 600; letter-spacing: .04em; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; line-height: 1;
+    background: rgba(255,255,255,.5);
+  }
+  .nav-actions { display: flex; align-items: center; gap: 4px; color: #3c3e44; }
+  .nav-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 9px; border-radius: 9px; color: #44464c; font-size: 13.5px; font-weight: 500;
+  }
+  .nav-btn:hover { background: rgba(20,22,28,.05); }
+  .nav-btn.icon-only { padding: 8px; }
+  .gift-wrap { position: relative; }
+  .gift-dot {
+    position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%;
+    background: #7c5cff; border: 1.5px solid var(--bg);
+  }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-left: 6px;
+    border: 1px solid var(--line);
+  }
+
+  /* ---------- body: sidebar + canvas ---------- */
+  .workspace { flex: 1 1 auto; display: flex; gap: 8px; padding: 0 10px 10px; min-height: 0; }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    flex: 0 0 296px; width: 296px;
+    background: var(--panel); border: 1px solid var(--line-2);
+    border-radius: 16px; padding: 14px 14px 18px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .segmented {
+    display: flex; gap: 4px; background: var(--inset); border-radius: 11px; padding: 4px;
+  }
+  .seg {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 13px; font-weight: 500; color: var(--muted); white-space: nowrap;
+    padding: 7px 6px; border-radius: 8px;
+  }
+  .seg .icon { width: 16px; height: 16px; }
+  .seg.active { background: var(--white); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+  .search {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--inset); border-radius: 10px; padding: 10px 12px; color: var(--muted);
+  }
+  .search .icon { width: 16px; height: 16px; color: var(--muted); }
+  .search input {
+    border: 0; background: none; outline: none; color: var(--ink); font-size: 13.5px; width: 100%;
+  }
+  .search input::placeholder { color: var(--muted); }
+
+  .section-label { font-size: 13px; font-weight: 500; color: var(--muted); padding: 2px 2px 0; }
+
+  .projects { display: flex; flex-direction: column; gap: 2px; }
+  .project {
+    display: flex; align-items: center; gap: 10px; padding: 7px 7px; border-radius: 10px;
+  }
+  .project:hover { background: rgba(20,22,28,.04); }
+  .thumb {
+    flex: 0 0 auto; width: 32px; height: 32px; border-radius: 7px; object-fit: cover;
+    background: var(--white); box-shadow: var(--shadow-sm);
+  }
+  .project-meta { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .project-title {
+    font-size: 11.5px; font-weight: 600; color: #25272b; letter-spacing: -.01em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .project-date { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--muted); }
+  .project-date .icon { width: 13px; height: 13px; color: var(--muted-2); }
+
+  /* ---------- canvas ---------- */
+  .canvas {
+    flex: 1 1 auto; position: relative; overflow: hidden;
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -1px -1px;
+    display: flex; justify-content: center;
+  }
+  .content {
+    width: 620px; max-width: 620px;
+    margin-top: 104px;
+    display: flex; flex-direction: column; align-items: flex-start;
+  }
+
+  .announce {
+    align-self: center;
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--panel); border: 1px solid var(--line-2);
+    border-radius: 999px; padding: 7px 14px; box-shadow: var(--shadow-sm);
+    margin-bottom: 34px;
+  }
+  .announce a { font-size: 13px; font-weight: 500; color: #3a3c42; text-decoration: underline; text-underline-offset: 2px; }
+  .announce .close { color: var(--muted); display: inline-flex; }
+  .announce .close .icon { width: 14px; height: 14px; }
+
+  .headline {
+    margin: 0 0 28px; align-self: stretch;
+    font-size: 64px; line-height: 1.04; font-weight: 300; letter-spacing: -.022em;
+    color: var(--headline); white-space: nowrap;
+  }
+
+  .suggestions { display: flex; gap: 14px; margin-bottom: 22px; width: max-content; }
+  .chip {
+    flex: 0 0 auto;
+    background: var(--panel); border: 1px solid var(--line-2);
+    border-radius: 999px; padding: 9px 15px; font-size: 13px; color: #44464c;
+    box-shadow: var(--shadow-sm); white-space: nowrap;
+  }
+
+  /* prompt card */
+  .prompt {
+    align-self: stretch;
+    background: var(--panel); border: 1px solid var(--line-2);
+    border-radius: 20px; padding: 16px 18px 14px;
+    box-shadow: var(--shadow-card);
+  }
+  .prompt-text {
+    margin: 0 0 30px; font-size: 13.5px; line-height: 1.55; color: #46484e;
+    width: 100%; display: block; border: 0; background: none; outline: none;
+    resize: none; padding: 0; overflow: hidden; font-family: inherit;
+  }
+  .prompt-text::placeholder { color: var(--muted); }
+  .toolbar { display: flex; align-items: center; gap: 10px; }
+  .tool-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 10px; color: #44464c;
+    background: var(--white); box-shadow: var(--shadow-sm);
+  }
+  .tool-btn .icon { width: 18px; height: 18px; }
+
+  .modes { display: flex; gap: 3px; background: var(--inset); border-radius: 10px; padding: 3px; }
+  .modes .opt {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--muted);
+  }
+  .modes .opt .icon { width: 15px; height: 15px; }
+  .modes .opt.active { background: var(--white); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+  .toolbar .spacer { flex: 1; }
+  .right-tools { display: flex; align-items: center; gap: 12px; color: var(--muted); }
+  .model {
+    display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+    font-size: 13.5px; font-weight: 500; color: #34363c;
+  }
+  .model .spark { color: #34363c; }
+  .model .chev { color: var(--muted); }
+  .model .icon { width: 15px; height: 15px; }
+  .icon-faint { color: var(--muted-2); }
+  .icon-faint .icon { width: 18px; height: 18px; }
+  .send {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%; background: var(--black); color: #fff;
+  }
+  .send .icon { width: 17px; height: 17px; stroke-width: 1.8; }
+
+  /* floating chat bubble */
+  .fab {
+    position: absolute; right: 18px; bottom: 16px;
+    width: 30px; height: 26px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--muted-2);
+  }
+  .fab .icon { width: 20px; height: 20px; }
+
+  /* ---------- interactivity: shared control affordances (resting look unchanged) ---------- */
+  .seg, .chip, .modes .opt, .project, .nav-btn, .tool-btn, .model,
+  .icon-faint, .send, .fab, .announce a, .announce .close { cursor: pointer; }
+  /* zero the default <button> padding for icon/text controls that size by content */
+  .model, .icon-faint, .announce .close { padding: 0; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .seg, .chip, .modes .opt, .project, .nav-btn, .tool-btn, .model,
+    .icon-faint, .send, .fab, .announce a, .announce .close,
+    .search, .prompt-text {
+      transition: background-color .14s ease, color .14s ease,
+                  box-shadow .14s ease, transform .14s ease, opacity .14s ease;
+    }
+  }
+
+  /* hover — subtle feedback only, does not alter the resting appearance */
+  .seg:hover:not(.active) { background: rgba(255,255,255,.45); color: #4a4c52; }
+  .chip:hover { background: var(--white); }
+  .modes .opt:hover:not(.active) { color: var(--ink); }
+  .tool-btn:hover { background: #eef0f3; }
+  .model:hover { color: #000; }
+  .icon-faint:hover { color: var(--muted); }
+  .send:hover { background: #2c2c2e; }
+  .fab:hover { color: var(--muted); }
+  .announce a:hover { color: var(--ink); }
+  .announce .close:hover { color: var(--ink); }
+
+  /* active press */
+  .seg:active, .chip:active, .modes .opt:active, .project:active,
+  .nav-btn:active, .tool-btn:active, .model:active, .icon-faint:active,
+  .send:active, .fab:active, .announce a:active, .announce .close:active { transform: scale(.97); }
+
+  /* keyboard focus ring (outline follows each control's border-radius) */
+  .seg:focus-visible, .chip:focus-visible, .modes .opt:focus-visible,
+  .project:focus-visible, .nav-btn:focus-visible, .tool-btn:focus-visible,
+  .model:focus-visible, .icon-faint:focus-visible, .send:focus-visible,
+  .fab:focus-visible, .announce a:focus-visible, .announce .close:focus-visible {
+    outline: 2px solid rgba(124,92,255,.85); outline-offset: 2px;
+  }
+  .search:focus-within { box-shadow: 0 0 0 2px rgba(124,92,255,.55); }
+  .prompt-text:focus-visible { outline: 2px solid rgba(124,92,255,.5); outline-offset: 3px; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1080px) {
+    .headline { font-size: 52px; }
+    .content { width: min(560px, 86vw); }
+  }
+  @media (max-width: 820px) {
+    .sidebar { display: none; }
+    .nav-btn span { display: none; }
+    .headline { white-space: normal; font-size: 44px; }
+    .content { margin-top: 48px; }
+  }
+  @media (max-width: 540px) {
+    .right-tools .icon-faint { display: none; }
+    .right-tools { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <!-- top navigation -->
+    <header class="topnav">
+      <div class="brand">
+        <span class="wordmark">Stitch</span>
+        <span class="beta">BETA</span>
+      </div>
+      <nav class="nav-actions">
+        <a class="nav-btn" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M5 4h9l4 4v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M13 4v5h5"/><path d="M8 13h7M8 16.5h7"/></svg>
+          <span>Docs</span>
+        </a>
+        <a class="nav-btn icon-only" href="#" aria-label="Community">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 6.5a3 3 0 0 1 0 5.6"/><path d="M18 19a5.5 5.5 0 0 0-2.6-4.7"/></svg>
+        </a>
+        <a class="nav-btn icon-only" href="#" aria-label="X">
+          <svg class="icon" viewBox="0 0 24 24" style="stroke-width:0;fill:currentColor"><path d="M17.5 3h3l-7 8 8.2 10h-6.4l-5-6.1L8 21H5l7.5-8.6L4.6 3H11l4.5 5.5L17.5 3Zm-1.1 16h1.7L8 4.8H6.2L16.4 19Z"/></svg>
+        </a>
+        <a class="nav-btn icon-only gift-wrap" href="#" aria-label="Gifts">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3 9h18"/><path d="M12 9v11"/><path d="M12 9S10.5 4.5 8.2 5.2C6.7 5.7 7 8 9 9Z"/><path d="M12 9s1.5-4.5 3.8-3.8C17.3 5.7 17 8 15 9Z"/></svg>
+          <span class="gift-dot"></span>
+        </a>
+        <button class="nav-btn icon-only" aria-label="More">
+          <svg class="icon" viewBox="0 0 24 24" style="stroke-width:0;fill:currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+        </button>
+        <img class="avatar" src="assets/avatar.png" alt="User avatar">
+      </nav>
+    </header>
+
+    <div class="workspace">
+      <!-- sidebar -->
+      <aside class="sidebar">
+        <div class="segmented" role="tablist" aria-label="Project scope">
+          <button type="button" class="seg active" role="tab" aria-selected="true">
+            <svg class="icon" viewBox="0 0 24 24" style="stroke-width:0;fill:currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            My Projects
+          </button>
+          <button type="button" class="seg" role="tab" aria-selected="false">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="9" r="2.6"/><path d="M3.5 18a4.5 4.5 0 0 1 9 0"/><circle cx="16" cy="9" r="2.2"/><path d="M14 14.4A4.5 4.5 0 0 1 20.5 18"/></svg>
+            Shared with me
+          </button>
+        </div>
+
+        <label class="search">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.2-3.2"/></svg>
+          <input type="text" placeholder="Search projects">
+        </label>
+
+        <p class="section-label">Examples</p>
+
+        <div class="projects">
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-1.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Indoor Plant Care Dashboard</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 20h6M12 17v3"/></svg>
+                May 19, 2025
+              </span>
+            </span>
+          </a>
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-2.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Alps skiing guide</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>
+                May 19, 2025
+              </span>
+            </span>
+          </a>
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-3.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Ceramic &amp; Pottery Marketplace</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>
+                May 19, 2025
+              </span>
+            </span>
+          </a>
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-4.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Board game club planner</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>
+                May 17, 2025
+              </span>
+            </span>
+          </a>
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-5.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Homemade Pizza Cooking Elite Class</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 20h6M12 17v3"/></svg>
+                May 19, 2025
+              </span>
+            </span>
+          </a>
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-6.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Personal photo library</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 20h6M12 17v3"/></svg>
+                May 17, 2025
+              </span>
+            </span>
+          </a>
+          <a class="project" href="#">
+            <img class="thumb" src="assets/thumb-7.png" alt="">
+            <span class="project-meta">
+              <span class="project-title">Employee Feedback Dashboard</span>
+              <span class="project-date">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 20h6M12 17v3"/></svg>
+                May 19, 2025
+              </span>
+            </span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- canvas -->
+      <main class="canvas">
+        <div class="content">
+          <div class="announce">
+            <a href="#">Meet the new Stitch</a>
+            <button type="button" class="close" aria-label="Dismiss">
+              <svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
+
+          <h1 class="headline">Welcome to Stitch..</h1>
+
+          <div class="suggestions">
+            <button type="button" class="chip">Make a catalog page with seasonal hom…</button>
+            <button type="button" class="chip">Make me an app for discovering Califor…</button>
+            <button type="button" class="chip">Mobile friendly hom…</button>
+          </div>
+
+          <section class="prompt">
+            <textarea class="prompt-text" rows="3" aria-label="Describe your app" spellcheck="false">Create a 2-in-1 Weather and Focus Timer app. Background should be a soft pastel blue gradient. The timer should be the centerpiece with a brushed silver stroke. Use thin, modern icons for weather conditions. The UI should feel airy and distraction-free.</textarea>
+            <div class="toolbar">
+              <button class="tool-btn" aria-label="Add">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+              <div class="modes" role="tablist" aria-label="Target platform">
+                <button type="button" class="opt active" role="tab" aria-selected="true">
+                  <svg class="icon" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>
+                  App
+                </button>
+                <button type="button" class="opt" role="tab" aria-selected="false">
+                  <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 20h6M12 17v3"/></svg>
+                  Web
+                </button>
+              </div>
+              <span class="spacer"></span>
+              <div class="right-tools">
+                <button type="button" class="icon-faint" aria-label="Theme">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-1.3-1-1.7-1-2.8 0-.8.7-1.2 1.6-1.2H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="11" r="1"/></svg>
+                </button>
+                <button type="button" class="model" aria-haspopup="listbox">
+                  <svg class="icon spark" viewBox="0 0 24 24" style="stroke-width:0;fill:currentColor"><path d="M12 2.5c.5 3.9 2.6 6 6.5 6.5-3.9.5-6 2.6-6.5 6.5-.5-3.9-2.6-6-6.5-6.5 3.9-.5 6-2.6 6.5-6.5Z"/></svg>
+                  3.0 Flash
+                  <svg class="icon chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <button type="button" class="icon-faint" aria-label="Voice">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M5 10v4M9 6v12M13 8v8M17 5v14M21 10v4"/></svg>
+                </button>
+                <button class="send" aria-label="Send">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></svg>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <button class="fab" aria-label="Help">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v8A1.5 1.5 0 0 1 18.5 16H9l-4 3.5V6.5Z"/></svg>
+        </button>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // Single-select groups: the segmented tabs and the App/Web switch
+      document.querySelectorAll('.segmented, .modes').forEach(function (group) {
+        var opts = group.querySelectorAll('[role="tab"]');
+        opts.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            opts.forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+          });
+        });
+      });
+
+      // Dismiss the "Meet the new Stitch" announcement pill
+      var announce = document.querySelector('.announce');
+      var closeBtn = announce && announce.querySelector('.close');
+      if (closeBtn) closeBtn.addEventListener('click', function () { announce.remove(); });
+    })();
+  </script>
+</body>
+</html>

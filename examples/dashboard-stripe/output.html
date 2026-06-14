@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your overview — Stripe Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #1a1a1a;
+    --ink-strong: #0a0a0a;
+    --muted: #6b7280;
+    --muted-soft: #8a8f98;
+    --line: #e6e6e6;
+    --line-soft: #efeff1;
+    --search-bg: #f5f6f8;
+
+    --brand: #635bff;       /* indigo: links, active nav, charts, + */
+    --brand-soft: #ededfd;  /* active nav pill */
+    --violet: #9a66fe;      /* succeeded */
+    --blue: #0a5bc4;        /* uncaptured */
+    --teal: #03a3c1;        /* refunded */
+    --orange: #ee6902;      /* failed */
+
+    --green-bg: #d7f7c2;
+    --green-ink: #1c7c34;
+    --pink-bg: #ffe9f4;
+    --pink-ink: #b3093c;
+
+    --r: 8px;
+    --r-pill: 7px;
+    --sidebar-w: 212px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: inherit; text-decoration: none; }
+  svg { display: block; }
+
+  .app { display: flex; min-height: 100vh; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex: none;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 14px 12px 16px;
+    gap: 2px;
+  }
+  .workspace {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px 14px;
+  }
+  .ws-tile {
+    width: 28px; height: 28px; border-radius: 7px; flex: none;
+    background: #18181b; display: grid; place-items: center;
+  }
+  .ws-name { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-strong); }
+
+  .nav { display: flex; flex-direction: column; gap: 1px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 7px 10px; border-radius: 7px;
+    font-size: 13.5px; font-weight: 450; color: #3a3a3a;
+    cursor: pointer;
+  }
+  .nav-item .ico { width: 17px; height: 17px; color: #6b7280; flex: none; }
+  .nav-item:hover { background: #f6f6f7; }
+  .nav-item.active { background: var(--brand-soft); color: var(--brand); font-weight: 500; }
+  .nav-item.active .ico { color: var(--brand); }
+  .nav-item .chev { margin-left: auto; width: 14px; height: 14px; color: #b4b7bd; }
+
+  .group-label {
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    padding: 6px 10px 4px; margin-top: 14px;
+  }
+  .nav-spacer { flex: 1 1 auto; }
+  .nav-bottom { margin-top: 8px; }
+
+  /* ---------- Main ---------- */
+  .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 18px;
+    height: 52px; padding: 0 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .search {
+    display: flex; align-items: center; gap: 9px;
+    height: 34px; width: min(440px, 42%);
+    background: var(--search-bg); border-radius: 8px;
+    padding: 0 12px; color: var(--muted);
+  }
+  .search input {
+    border: 0; background: transparent; outline: 0;
+    font: inherit; font-size: 14px; color: var(--ink); width: 100%;
+  }
+  .search input::placeholder { color: var(--muted); }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .testmode { display: flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: 500; color: var(--ink); white-space: nowrap; flex: none; }
+  .toggle { width: 36px; height: 20px; border-radius: 99px; background: #d7d9de; position: relative; border: 0; padding: 0; cursor: pointer; flex: none; }
+  .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .toggle:hover { background: #c9ccd2; }
+  .toggle[aria-checked="true"] { background: var(--brand); }
+  .toggle[aria-checked="true"]:hover { background: #544dff; }
+  .toggle[aria-checked="true"]::after { left: 18px; }
+  .icon-btn { width: 20px; height: 20px; color: #515861; cursor: pointer; background: none; border: 0; padding: 0; display: grid; place-items: center; }
+  .icon-btn svg { width: 20px; height: 20px; }
+  .icon-btn:hover { color: var(--ink-strong); }
+  .icon-btn:active { color: var(--brand); }
+  .plus-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--brand); display: grid; place-items: center; color: #fff; border: 0; padding: 0; cursor: pointer; }
+  .plus-btn:hover { background: #544dff; }
+  .plus-btn:active { background: #4b44e6; }
+
+  .content { padding: 12px 26px 26px; }
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-strong); margin: 4px 0 16px; }
+
+  /* control row */
+  .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; row-gap: 10px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 32px; padding: 0 11px; border: 1px solid #e3e3e6; border-radius: 7px;
+    background: #fff; font-size: 13.5px; font-weight: 500; color: var(--ink);
+    cursor: pointer; white-space: nowrap;
+    font-family: inherit; line-height: 1;
+  }
+  .pill:hover { background: #fafafa; }
+  .pill:active { background: #f0f0f1; }
+  .pill[aria-pressed="true"] { background: var(--brand-soft); border-color: #d9d6ff; color: var(--brand); }
+  .pill[aria-pressed="true"] .chev, .pill[aria-pressed="true"] .updown { color: var(--brand); }
+  .pill .chev, .pill .updown { width: 13px; height: 13px; color: #8a8f98; }
+  .compared { font-size: 13.5px; color: var(--muted); margin: 0 3px; }
+  .controls-right { margin-left: auto; display: flex; gap: 8px; }
+
+  .divider { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+  .divider.row-div { margin: 46px 0 46px; }
+
+  /* card grid */
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 4vw, 64px); }
+  .card { min-width: 0; }
+  .card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--ink-strong); }
+  .info {
+    width: 15px; height: 15px; border: 1px solid #cfd2d8; border-radius: 4px;
+    display: inline-grid; place-items: center; color: #9aa0aa;
+    font-size: 9px; font-weight: 600; font-style: normal; line-height: 1;
+  }
+  .badge {
+    margin-left: 2px; font-size: 12px; font-weight: 600; color: var(--green-ink);
+    background: var(--green-bg); border-radius: 6px; padding: 1px 7px;
+  }
+  .card-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 12px; font-size: 13px;
+  }
+  .link { color: var(--brand); font-weight: 500; }
+  .link:hover { text-decoration: underline; }
+  .updated { color: var(--muted); }
+
+  /* payments */
+  .pay-body { max-width: 248px; }
+  .stack-bar { display: flex; gap: 2px; height: 10px; margin-bottom: 12px; }
+  .stack-bar > i { display: block; border-radius: 5px; }
+  .seg-succ { background: var(--violet); }
+  .seg-fail { background: var(--orange); }
+  .legend-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px;
+  }
+  .legend-row .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .legend-row .lbl { color: var(--ink); }
+  .legend-row .val { margin-left: auto; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* big metric */
+  .metric { display: flex; align-items: baseline; gap: 9px; margin-bottom: 6px; }
+  .metric .big { font-size: 20px; font-weight: 600; color: var(--ink-strong); letter-spacing: -0.01em; }
+  .metric .prev { font-size: 14px; color: var(--muted); }
+
+  /* chart */
+  .chart { position: relative; margin-top: 4px; padding-top: 2px; }
+  .ylab { position: absolute; left: 0; font-size: 12px; color: var(--muted-soft); background: #fff; padding-right: 4px; }
+  .ylab.top { top: 0; }
+  .ylab.bot { bottom: 22px; }
+  .spark { width: 100%; height: 134px; display: block; }
+  .spark .base { stroke: #e9eaee; stroke-width: 1; }
+  .spark .line { stroke: var(--brand); stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .xaxis { display: flex; justify-content: space-between; margin-top: 2px; font-size: 12px; color: var(--muted-soft); }
+
+  /* failed payments list */
+  .fp-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line-soft); }
+  .fp-main { min-width: 0; }
+  .fp-amt { font-size: 14px; font-weight: 600; color: var(--ink-strong); }
+  .fp-sub { font-size: 12px; color: var(--muted); margin-top: 3px; white-space: nowrap; }
+  .tag { margin-left: auto; flex: none; font-size: 12px; font-weight: 500; border-radius: 6px; padding: 2px 9px; background: var(--pink-bg); color: var(--pink-ink); }
+
+  /* top customers */
+  .tc-row { display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; border-bottom: 1px solid var(--line-soft); }
+  .tc-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .tc-email { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .tc-val { margin-left: auto; font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .head-aside { margin-left: auto; font-size: 13px; color: var(--muted); font-weight: 400; }
+
+  /* ---------- Interaction states (affordances only; resting look unchanged) ---------- */
+  button { font-family: inherit; color: inherit; }
+  .nav-item, .pill, .icon-btn, .plus-btn, .toggle, .toggle::after, .link,
+  .card, .fp-row, .tc-row, .legend-row {
+    transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease,
+                box-shadow 140ms ease, left 140ms ease;
+  }
+  a:focus-visible, button:focus-visible, [role="switch"]:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  .search:focus-within { box-shadow: 0 0 0 1px var(--brand), 0 0 0 3px rgba(99,91,255,.30); }
+  .nav-item:active { background: #eeeef0; }
+  .card { border-radius: 10px; }
+  .card:hover { box-shadow: 0 1px 2px rgba(10,10,10,.05), 0 0 0 1px var(--line-soft); }
+  .fp-row:hover, .tc-row:hover, .legend-row:hover { background: #fafbfc; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+
+  @media (max-width: 1080px) {
+    .row { grid-template-columns: 1fr 1fr; gap: 40px; }
+  }
+  @media (max-width: 760px) {
+    .sidebar { display: none; }
+    .row { grid-template-columns: 1fr; }
+    .topbar { gap: 10px; padding: 0 14px; }
+    .search { width: 40%; }
+    .topbar-right { gap: 12px; }
+    .tb-extra { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="workspace">
+      <span class="ws-tile" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="#fff"><rect x="1" y="1" width="4" height="4" rx="1"/><rect x="6.5" y="1" width="4" height="4" rx="1" opacity=".7"/><rect x="1" y="6.5" width="4" height="4" rx="1" opacity=".7"/><rect x="6.5" y="6.5" width="4" height="4" rx="1"/></svg>
+      </span>
+      <span class="ws-name">Content-mobbin</span>
+    </div>
+
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item active" href="#" aria-current="page">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>
+        Home
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4" fill="#fff"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4" fill="#fff"/></svg>
+        Balances
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h12l-3-3"/><path d="M19 15H7l3 3"/></svg>
+        Transactions
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>
+        Customers
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>
+        Product catalogue
+      </a>
+    </nav>
+
+    <div class="group-label">Products</div>
+    <nav class="nav" aria-label="Products">
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Payments
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15l-2.2-1.4L13.6 21l-2.3-1.4L9 21l-2.3-1.4L4.5 21V5a2 2 0 0 1 1.5-2z"/><line x1="8" y1="9" x2="14" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
+        Billing
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="5"/><line x1="18" y1="20" x2="18" y2="9"/></svg>
+        Reporting
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        More
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+    </nav>
+
+    <div class="nav-spacer"></div>
+
+    <div class="nav nav-bottom">
+      <a class="nav-item" href="#">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8l-4 4 4 4"/><path d="M14 7l-3 10"/></svg>
+        Developers
+      </a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <label class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input type="text" placeholder="Search" aria-label="Search">
+      </label>
+      <div class="topbar-right">
+        <span class="testmode">Test mode <button class="toggle" type="button" role="switch" aria-checked="false" aria-label="Test mode"></button></span>
+        <button class="icon-btn tb-extra" type="button" aria-label="Apps">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </button>
+        <button class="icon-btn tb-extra" type="button" aria-label="Help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a2.8 2.8 0 0 1 5.3 1c0 1.8-2.7 2.2-2.7 4"/><circle cx="11.9" cy="16.6" r=".6" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn tb-extra" type="button" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+        </button>
+        <button class="icon-btn" type="button" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="plus-btn" type="button" aria-label="Create new">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <h1>Your overview</h1>
+
+      <div class="controls">
+        <button class="pill" type="button" data-pill-toggle aria-pressed="false">Last 7 days</button>
+        <span class="compared">compared to</span>
+        <button class="pill" type="button" data-pill-toggle aria-pressed="false">Previous period
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <button class="pill" type="button" data-pill-toggle aria-pressed="false">Daily
+          <svg class="updown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10l4-4 4 4"/><path d="M8 14l4 4 4-4"/></svg>
+        </button>
+        <div class="controls-right">
+          <button class="pill" type="button"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg> Add</button>
+          <button class="pill" type="button"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Edit</button>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- ===== Row 1 ===== -->
+      <section class="row">
+        <!-- Payments -->
+        <article class="card">
+          <div class="card-head">
+            <span class="card-title">Payments</span>
+            <span class="info">i</span>
+          </div>
+          <div class="pay-body">
+            <div class="stack-bar">
+              <i class="seg-succ" style="flex:2"></i>
+              <i class="seg-fail" style="flex:6"></i>
+            </div>
+            <div class="legend-row"><span class="dot" style="background:var(--violet)"></span><span class="lbl">Succeeded</span><span class="val">MYR 2.00</span></div>
+            <div class="legend-row"><span class="dot" style="background:var(--blue)"></span><span class="lbl">Uncaptured</span><span class="val">MYR 0.00</span></div>
+            <div class="legend-row"><span class="dot" style="background:var(--teal)"></span><span class="lbl">Refunded</span><span class="val">MYR 0.00</span></div>
+            <div class="legend-row"><span class="dot" style="background:var(--orange)"></span><span class="lbl">Failed</span><span class="val">MYR 6.00</span></div>
+          </div>
+          <div class="card-foot"><a class="link" href="#">View more</a><span class="updated">Updated yesterday</span></div>
+        </article>
+
+        <!-- Gross volume -->
+        <article class="card">
+          <div class="card-head">
+            <span class="card-title">Gross volume</span>
+            <span class="info">i</span>
+            <span class="badge">+&#8734;</span>
+          </div>
+          <div class="metric"><span class="big">MYR 2.00</span><span class="prev">MYR 0.00 previous period</span></div>
+          <div class="chart">
+            <span class="ylab top">MYR 2.00</span>
+            <span class="ylab bot">MYR 0.00</span>
+            <svg class="spark" viewBox="0 0 320 110" preserveAspectRatio="none">
+              <line class="base" x1="0" y1="104" x2="320" y2="104" vector-effect="non-scaling-stroke"/>
+              <polyline class="line" points="0,104 120,104 166,5 212,104 320,104" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="xaxis"><span>3 Dec</span><span>Today</span></div>
+          </div>
+          <div class="card-foot"><a class="link" href="#">View more</a><span class="updated">Updated 06:23</span></div>
+        </article>
+
+        <!-- Net volume from sales -->
+        <article class="card">
+          <div class="card-head">
+            <span class="card-title">Net volume from sales</span>
+            <span class="info">i</span>
+            <span class="badge">+&#8734;</span>
+          </div>
+          <div class="metric"><span class="big">MYR 0.92</span><span class="prev">MYR 0.00 previous period</span></div>
+          <div class="chart">
+            <span class="ylab top">MYR 0.92</span>
+            <span class="ylab bot">MYR 0.00</span>
+            <svg class="spark" viewBox="0 0 320 110" preserveAspectRatio="none">
+              <line class="base" x1="0" y1="104" x2="320" y2="104" vector-effect="non-scaling-stroke"/>
+              <polyline class="line" points="0,104 120,104 166,5 212,104 320,104" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="xaxis"><span>3 Dec</span><span>Today</span></div>
+          </div>
+          <div class="card-foot"><a class="link" href="#">View more</a><span class="updated">Updated 06:23</span></div>
+        </article>
+      </section>
+
+      <hr class="divider row-div">
+
+      <!-- ===== Row 2 ===== -->
+      <section class="row">
+        <!-- Failed payments -->
+        <article class="card">
+          <div class="card-head"><span class="card-title">Failed payments</span></div>
+          <div class="fp-row">
+            <div class="fp-main"><div class="fp-amt">MYR 2.00</div><div class="fp-sub">6 Dec, 00:41 &middot; iamleonardkim@gmail.com</div></div>
+            <span class="tag">Failed</span>
+          </div>
+          <div class="fp-row">
+            <div class="fp-main"><div class="fp-amt">MYR 2.00</div><div class="fp-sub">6 Dec, 00:40 &middot; iamleonardkim@gmail.com</div></div>
+            <span class="tag">Failed</span>
+          </div>
+          <div class="fp-row">
+            <div class="fp-main"><div class="fp-amt">MYR 2.00</div><div class="fp-sub">6 Dec, 00:35 &middot; iamleonardkim@gmail.com</div></div>
+            <span class="tag">Failed</span>
+          </div>
+          <div class="card-foot"><span class="updated">3 of <a class="link" href="#">3 results</a></span><span class="updated">Updated 06:23</span></div>
+        </article>
+
+        <!-- New customers -->
+        <article class="card">
+          <div class="card-head">
+            <span class="card-title">New customers</span>
+            <span class="info">i</span>
+            <span class="badge">+&#8734;</span>
+          </div>
+          <div class="metric"><span class="big">2</span><span class="prev">0 previous period</span></div>
+          <div class="chart">
+            <span class="ylab top">2</span>
+            <span class="ylab bot">0</span>
+            <svg class="spark" viewBox="0 0 320 110" preserveAspectRatio="none">
+              <line class="base" x1="0" y1="104" x2="320" y2="104" vector-effect="non-scaling-stroke"/>
+              <polyline class="line" points="0,104 85,104 122,5 159,104 320,104" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="xaxis"><span>3 Dec</span><span>Today</span></div>
+          </div>
+          <div class="card-foot"><a class="link" href="#">View more</a><span class="updated">Updated 06:23</span></div>
+        </article>
+
+        <!-- Top customers by spend -->
+        <article class="card">
+          <div class="card-head">
+            <span class="card-title">Top customers by spend</span>
+            <span class="info">i</span>
+            <span class="head-aside">All time</span>
+          </div>
+          <div class="tc-row">
+            <div class="fp-main"><div class="tc-name">Leonard Kim</div><div class="tc-email">iamleonardkim@gmail.com</div></div>
+            <span class="tc-val">MYR 2.00</span>
+          </div>
+          <div class="card-foot"><a class="link" href="#">View more</a><span class="updated">Updated 03:00</span></div>
+        </article>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+  (function () {
+    // Sidebar: clicking a nav item sets an exclusive active state.
+    var navItems = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
+    navItems.forEach(function (item) {
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+        navItems.forEach(function (n) { n.classList.remove('active'); n.removeAttribute('aria-current'); });
+        item.classList.add('active');
+        item.setAttribute('aria-current', 'page');
+      });
+    });
+
+    // Test mode: real on/off switch.
+    var sw = document.querySelector('.toggle[role="switch"]');
+    if (sw) {
+      sw.addEventListener('click', function () {
+        sw.setAttribute('aria-checked', sw.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+      });
+    }
+
+    // Control pills: toggle a pressed/active state on click.
+    document.querySelectorAll('.pill[data-pill-toggle]').forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        pill.setAttribute('aria-pressed', pill.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      });
+    });
+  })();
+</script>
+</body>
+</html>

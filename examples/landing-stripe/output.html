@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stripe — Financial infrastructure to grow your revenue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a2540;          /* dark navy text */
+    --headline: #1e1a72;     /* navy base, tinted by the gradient via multiply */
+    --slate: #3c4257;        /* subhead gray */
+    --pill-line: rgba(255,255,255,.55);
+    --content: 1280px;
+    --pad: clamp(20px, 15.5vw, 199px);   /* matches Stripe's ~199px hero inset */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: #fff;
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* Interactive affordances (Phase 4) — feedback only; resting look unchanged. */
+  .nav a, .signin, .contact, .pill, .brand, .cta button {
+    cursor: pointer;
+    transition: opacity .14s ease, background-color .14s ease, color .14s ease,
+                transform .14s ease, box-shadow .14s ease;
+  }
+  .signin:hover { opacity: .8; }
+  .contact:hover { background: #f0f0f3; }
+  .pill:hover { background: rgba(255,255,255,.24); }
+  .cta button:hover { background: #15324f; }
+  .nav a:active, .signin:active, .contact:active, .pill:active,
+  .brand:active, .cta button:active { transform: translateY(1px); }
+  .nav a:focus-visible, .signin:focus-visible, .contact:focus-visible,
+  .pill:focus-visible, .brand:focus-visible {
+    outline: 2px solid #fff; outline-offset: 3px; border-radius: 8px;
+  }
+  .cta:focus-within { box-shadow: 0 2px 5px rgba(10,37,64,.08), 0 0 0 2px #635bff; }
+  .cta button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  /* ============ Top band: full-bleed gradient + diagonal white ============ */
+  .top {
+    position: relative;
+    isolation: isolate;            /* contain the multiply blend */
+    overflow: hidden;
+    min-height: 805px;
+    background-color: #cf4aa6;
+    /* the sharp white band (lower-right) lives in the background so the
+       multiply headline can tint against the colorful gradient behind it */
+    background-image:
+      linear-gradient(168deg, rgba(255,255,255,0) 47.2%, #fff 47.2%),
+      radial-gradient(30% 36% at 3% -7%, #a614ee 0%, #a614ee 26%, rgba(166,20,238,0) 68%),
+      radial-gradient(92% 22% at 53% 0%, #ff6f4b 0%, #ff6f4b 24%, rgba(255,111,75,0) 82%),
+      radial-gradient(32% 24% at 15% 22%, #84c7f8 0%, rgba(132,199,248,0) 58%),
+      radial-gradient(66% 56% at 24% 46%, #f42836 0%, rgba(244,40,54,0) 56%),
+      radial-gradient(50% 50% at 0% 74%, #f73340 0%, rgba(247,51,64,0) 54%),
+      radial-gradient(50% 64% at 91% 56%, #b042d8 0%, rgba(176,66,216,0) 56%),
+      radial-gradient(42% 80% at 106% 32%, #df2c92 0%, rgba(223,44,146,0) 54%),
+      linear-gradient(150deg, #9a1fe8 0%, #be3fc6 24%, #e8455f 54%, #ff6a48 92%);
+  }
+
+  .wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 805px;
+    max-width: var(--content);
+    margin: 0 auto;
+    padding-inline: var(--pad);
+  }
+
+  /* ============ Nav ============ */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+    padding-top: 20px;
+    color: #fff;
+  }
+  .brand {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin-right: 6px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a { font-size: 15px; font-weight: 500; color: #fff; opacity: .96; }
+  .nav-links a:hover { opacity: .8; }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+  .signin { font-size: 15px; font-weight: 500; color: #fff; }
+  .contact {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #fff; color: var(--ink);
+    font-size: 15px; font-weight: 500;
+    padding: 7px 15px; border-radius: 20px;
+  }
+
+  /* ============ Hero ============ */
+  .hero { position: relative; padding-top: 42px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: rgba(255,255,255,.16);
+    border: 1px solid var(--pill-line);
+    color: #fff; font-size: 14px; font-weight: 500;
+    padding: 7px 7px 7px 16px; border-radius: 22px;
+    backdrop-filter: blur(2px);
+  }
+  .pill .dot { width: 4px; height: 4px; border-radius: 50%; background: #fff; opacity: .8; }
+  .pill .chev {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,.22); font-size: 11px;
+  }
+
+  .headline {
+    margin: 16px 0 0;
+    font-weight: 800;
+    font-size: clamp(38px, 5.18vw, 66px);
+    line-height: 1.24;
+    letter-spacing: -0.035em;
+    color: var(--headline);
+    mix-blend-mode: multiply;
+  }
+
+  .subhead {
+    margin: 32px 0 0;
+    max-width: 486px;
+    font-size: 17px;
+    line-height: 1.5;
+    font-weight: 450;
+    color: var(--slate);
+  }
+
+  .cta {
+    margin-top: 30px;
+    display: flex; align-items: center;
+    background: #fff;
+    border-radius: 28px;
+    padding: 6px 6px 6px 22px;
+    width: min(366px, 100%);
+    box-shadow: 0 2px 5px rgba(10,37,64,.08), 0 0 0 1px rgba(10,37,64,.05);
+  }
+  .cta input {
+    flex: 1; min-width: 0; border: 0; outline: 0;
+    font: inherit; font-size: 16px; color: var(--ink);
+    background: transparent;
+  }
+  .cta input::placeholder { color: #8792a2; }
+  .cta button {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 0; cursor: pointer;
+    background: #0a2540; color: #fff;
+    font: inherit; font-size: 15px; font-weight: 500;
+    padding: 11px 20px; border-radius: 22px;
+    white-space: nowrap;
+  }
+
+  /* ============ Floating product cluster (cropped from source) ============ */
+  .cluster {
+    position: absolute;
+    top: 100px;
+    right: 0;
+    width: 550px;
+    height: auto;
+    z-index: 3;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 26px);
+            mask-image: linear-gradient(to right, transparent 0, #000 26px);
+  }
+
+  /* ============ Customer logos ============ */
+  .logos {
+    position: relative;
+    margin-top: auto;
+    padding-bottom: 16px;
+  }
+  .logos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .logo-cell {
+    display: flex; align-items: center; justify-content: center;
+    height: 70px;
+    border-left: 1px solid rgba(10,37,64,.07);
+    color: #0a2540;
+  }
+  .logo-cell:first-child { border-left: 0; }
+  /* faint full-height vertical gridlines behind the lower area */
+  .gridlines {
+    position: absolute;
+    z-index: -1;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 360px;
+    background-image:
+      linear-gradient(to right, rgba(10,37,64,.06) 1px, transparent 1px);
+    background-size: calc((100% ) / 4) 100%;
+    pointer-events: none;
+  }
+
+  .logo-openai { display: flex; align-items: center; gap: 9px; font-size: 25px; font-weight: 600; letter-spacing: -0.01em; }
+  .logo-amazon { position: relative; font-size: 27px; font-weight: 700; letter-spacing: -0.02em; padding-bottom: 9px; }
+  .logo-amazon .smile { position: absolute; left: 6%; bottom: 0; width: 92%; height: 12px; overflow: visible; }
+  .logo-google { font-size: 27px; font-weight: 500; letter-spacing: -0.01em; }
+  .logo-google span:nth-child(1){color:#4285F4}
+  .logo-google span:nth-child(2){color:#EA4335}
+  .logo-google span:nth-child(3){color:#FBBC05}
+  .logo-google span:nth-child(4){color:#4285F4}
+  .logo-google span:nth-child(5){color:#34A853}
+  .logo-google span:nth-child(6){color:#EA4335}
+  .logo-anthropic { font-size: 25px; font-weight: 700; letter-spacing: 0.01em; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 1080px) {
+    .cluster { width: 46vw; }
+  }
+  @media (max-width: 860px) {
+    :root { --pad: 22px; }
+    .top {
+      min-height: 0; padding-bottom: 40px;
+      background-image:
+        radial-gradient(95% 20% at 50% 0%, #ff6f4b 0%, rgba(255,111,75,0) 72%),
+        radial-gradient(80% 34% at 8% 15%, #a614ee 0%, rgba(166,20,238,0) 60%),
+        linear-gradient(173deg, #be37ba 0%, #f42836 32%, #ff7a52 43%, #ffffff 43%);
+    }
+    .nav-links { display: none; }
+    .cluster { position: static; width: 100%; margin-top: 36px; -webkit-mask-image: none; mask-image: none; }
+    .headline { max-width: none; }
+    .logos { margin-top: 60px; }
+    .logos-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .gridlines { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="wrap">
+      <header class="nav">
+        <a class="brand" href="#">stripe</a>
+        <nav class="nav-links">
+          <a href="#">Products</a>
+          <a href="#">Solutions</a>
+          <a href="#">Developers</a>
+          <a href="#">Resources</a>
+          <a href="#">Pricing</a>
+        </nav>
+        <div class="nav-right">
+          <a class="signin" href="#">Sign in&nbsp;&rsaquo;</a>
+          <a class="contact" href="#">Contact sales&nbsp;&rsaquo;</a>
+        </div>
+      </header>
+
+      <main class="hero">
+        <a class="pill" href="#">
+          Sessions 2025 <span class="dot"></span> Early-bird registration now open
+          <span class="chev">&rsaquo;</span>
+        </a>
+
+        <h1 class="headline">Financial<br>infrastructure<br>to grow your<br>revenue</h1>
+
+        <p class="subhead">Join the millions of companies of all sizes that use Stripe to accept payments online and in person, embed financial services, power custom revenue models, and build a more profitable business.</p>
+
+        <form class="cta" onsubmit="return false">
+          <input type="email" placeholder="Email address" aria-label="Email address">
+          <button type="submit">Start now&nbsp;&rsaquo;</button>
+        </form>
+      </main>
+
+      <img class="cluster" src="assets/cluster.png" alt="Stripe checkout card and Rocket Rides dashboard">
+
+      <section class="logos">
+        <div class="gridlines"></div>
+        <div class="logos-grid">
+          <div class="logo-cell">
+            <span class="logo-openai">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.28 9.82a5.98 5.98 0 0 0-.52-4.91 6.05 6.05 0 0 0-6.51-2.9A6 6 0 0 0 4.98 4.18 5.98 5.98 0 0 0 1.04 7.08a6.05 6.05 0 0 0 .74 7.1 5.98 5.98 0 0 0 .52 4.91 6.05 6.05 0 0 0 6.51 2.9A5.98 5.98 0 0 0 13.83 24a6.05 6.05 0 0 0 5.77-4.19 5.98 5.98 0 0 0 3.94-2.9 6.05 6.05 0 0 0-.74-7.09Zm-9 12.6a4.48 4.48 0 0 1-2.88-1.04l.14-.08 4.78-2.76a.78.78 0 0 0 .4-.68v-6.74l2.02 1.17v5.58a4.5 4.5 0 0 1-4.46 4.55Zm-9.65-4.12a4.48 4.48 0 0 1-.54-3.01l.14.08 4.78 2.76a.78.78 0 0 0 .78 0l5.84-3.37v2.33a.08.08 0 0 1-.03.06l-4.83 2.79a4.5 4.5 0 0 1-6.14-1.64Zm-1.26-10.4a4.48 4.48 0 0 1 2.35-1.97v5.68a.78.78 0 0 0 .39.68l5.84 3.37-2.02 1.17a.08.08 0 0 1-.07 0L3.43 17.2A4.5 4.5 0 0 1 2.12 7.9Zm16.6 3.86-5.84-3.38 2.02-1.16a.08.08 0 0 1 .07 0l4.83 2.79a4.5 4.5 0 0 1-.68 8.11v-5.68a.78.78 0 0 0-.4-.68ZM20.73 8.7l-.14-.09-4.78-2.76a.78.78 0 0 0-.78 0L9.2 9.22V6.89a.08.08 0 0 1 .03-.06l4.83-2.78a4.5 4.5 0 0 1 6.68 4.66Zm-12.65 4.4-2.02-1.17V6.34a4.5 4.5 0 0 1 7.37-3.45l-.14.08L8.5 5.73a.78.78 0 0 0-.4.68l-.02 6.7Zm1.1-2.36 2.6-1.5 2.6 1.5v3l-2.6 1.5-2.6-1.5v-3Z"/></svg>
+              OpenAI
+            </span>
+          </div>
+          <div class="logo-cell">
+            <span class="logo-amazon">amazon<svg class="smile" viewBox="0 0 100 14" fill="none" aria-hidden="true"><path d="M3 3 C 30 16, 72 16, 95 5" stroke="#FF9900" stroke-width="3.4" stroke-linecap="round"/><path d="M95 5 l -1.5 6.5 l 6.5 -3.2 z" fill="#FF9900"/></svg></span>
+          </div>
+          <div class="logo-cell">
+            <span class="logo-google"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></span>
+          </div>
+          <div class="logo-cell">
+            <span class="logo-anthropic">ANTHROP\C</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
